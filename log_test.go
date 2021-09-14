@@ -32,3 +32,8 @@ func TestMultiLogger(t *testing.T) {
 	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(DebugLevel), NewFileLogger(DebugLevel, "./multi_logs", "ns")))
 	TestLogs(t)
 }
+
+func TestMinLogLevel(t *testing.T) {
+	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(InfoLevel), NewFileLogger(InfoLevel, "./multi_logs", "lvl")))
+	TestLogs(t)
+}

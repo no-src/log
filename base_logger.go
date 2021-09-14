@@ -2,7 +2,7 @@ package log
 
 // baseLogger Implement basic logger operation
 type baseLogger struct {
-	level Level
+	level Level // min log level
 	Writer
 }
 

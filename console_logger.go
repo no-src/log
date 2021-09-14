@@ -4,16 +4,15 @@ import "fmt"
 
 type consoleLogger struct {
 	baseLogger
-	level Level
 }
 
 // NewConsoleLogger get a console logger
 func NewConsoleLogger(level Level) Logger {
-	logger := &consoleLogger{
-		level: level,
-	}
+	logger := &consoleLogger{}
 	// use current instance Writer to override baseLogger's Writer
 	logger.baseLogger.Writer = logger
+	// set min log level
+	logger.baseLogger.level = level
 	return logger
 }
 

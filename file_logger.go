@@ -10,7 +10,6 @@ import (
 
 type fileLogger struct {
 	baseLogger
-	level  Level
 	logDir string
 	in     chan string
 	writer *bufio.Writer
@@ -22,12 +21,12 @@ type fileLogger struct {
 // NewFileLogger get a file logger
 func NewFileLogger(level Level, logDir string, filePrefix string) Logger {
 	logger := &fileLogger{
-		level:      level,
 		logDir:     logDir,
 		in:         make(chan string, 10),
 		filePrefix: filePrefix,
 	}
 	logger.baseLogger.Writer = logger
+	logger.baseLogger.level = level
 	logger.init()
 	return logger
 }
