@@ -44,3 +44,14 @@ func (l *multiLogger) Log(format string, args ...interface{}) {
 		logger.Log(format, args...)
 	}
 }
+
+func (l *multiLogger) Close() error {
+	var err error
+	for _, logger := range l.loggers {
+		closeErr := logger.Close()
+		if closeErr != nil {
+			err = closeErr
+		}
+	}
+	return err
+}

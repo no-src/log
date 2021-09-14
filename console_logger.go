@@ -22,3 +22,7 @@ func (l *consoleLogger) Log(format string, args ...interface{}) {
 	format = appendRowTerminator(format)
 	fmt.Print(format)
 }
+
+func (l *consoleLogger) Close() error {
+	return nil
+}

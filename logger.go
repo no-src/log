@@ -16,7 +16,10 @@ type Logger interface {
 
 // Writer implement write to log
 type Writer interface {
+	// Log write log to output
 	Log(format string, args ...interface{})
+	// Close to close log and release dependencies
+	Close() error
 }
 
 var loggerFormat = "[%s] %s"          // [level] content

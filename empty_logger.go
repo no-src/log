@@ -28,3 +28,7 @@ func (l *emptyLogger) Error(err error, format string, args ...interface{}) {
 func (l *emptyLogger) Log(format string, args ...interface{}) {
 
 }
+
+func (l *emptyLogger) Close() error {
+	return nil
+}
