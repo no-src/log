@@ -25,20 +25,20 @@ func TestEmptyLogger(t *testing.T) {
 	TestLogs(t)
 }
 
-func TestFileLogger(t *testing.T) {
-	InitDefaultLogger(NewFileLogger(DebugLevel, "./logs", "ns"))
-	defer Close()
-	TestLogs(t)
-}
+//func TestFileLogger(t *testing.T) {
+//	InitDefaultLogger(NewFileLogger(DebugLevel, "./logs", "ns"))
+//	defer Close()
+//	TestLogs(t)
+//}
 
 func TestMultiLogger(t *testing.T) {
-	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(DebugLevel), NewFileLogger(DebugLevel, "./multi_logs", "ns")))
+	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(DebugLevel) /*, NewFileLogger(DebugLevel, "./multi_logs", "ns")*/))
 	defer Close()
 	TestLogs(t)
 }
 
 func TestMinLogLevel(t *testing.T) {
-	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(InfoLevel), NewFileLogger(InfoLevel, "./multi_logs", "lvl")))
+	InitDefaultLogger(NewConsoleLogger(InfoLevel))
 	defer Close()
 	TestLogs(t)
 }
