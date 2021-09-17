@@ -32,7 +32,7 @@ func buildLog(level Level, format string) string {
 }
 
 func buildErrorLog(level Level, err error, format string) string {
-	format = fmt.Sprintf(errorLoggerFormat, level.String(), err, format)
+	format = fmt.Sprintf(errorLoggerFormat, level.String(), format, err)
 	return format
 }
 
