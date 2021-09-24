@@ -32,8 +32,9 @@ func NewFileLogger(level Level, logDir string, filePrefix string) Logger {
 		close:      make(chan bool, 1),
 		filePrefix: filePrefix,
 	}
-	logger.baseLogger.Writer = logger
-	logger.baseLogger.level = level
+	// init baseLogger
+	logger.baseLogger.init(logger, level)
+	// init fileLogger
 	logger.init()
 	return logger
 }
@@ -43,7 +44,6 @@ func (l *fileLogger) Log(format string, args ...interface{}) {
 	if l.initialized && !l.closed {
 		format = fmt.Sprintf("[%s] ", time.Now().Format("2006-01-02 15:04:05")) + format
 		format = fmt.Sprintf(format, args...)
-		format = appendRowTerminator(format)
 		l.in <- logMsg{
 			log:    format,
 			closed: false,
