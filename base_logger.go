@@ -46,13 +46,11 @@ var defaultTerminator = "\n"
 
 func (l *baseLogger) BuildLog(level Level, format string) string {
 	format = fmt.Sprintf(loggerFormat, level.String(), format)
-	format = l.builder.AppendRowTerminator(format)
 	return format
 }
 
 func (l *baseLogger) BuildErrorLog(level Level, err error, format string) string {
 	format = fmt.Sprintf(errorLoggerFormat, level.String(), format, err)
-	format = l.builder.AppendRowTerminator(format)
 	return format
 }
 

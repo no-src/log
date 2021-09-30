@@ -10,13 +10,15 @@ import (
 
 type fileLogger struct {
 	baseLogger
-	logDir      string
-	in          chan logMsg
-	writer      *bufio.Writer
-	initialized bool
-	filePrefix  string
-	closed      bool
-	close       chan bool // the log is closed, and wait to write all the logs
+	logDir        string
+	in            chan logMsg
+	writer        *bufio.Writer
+	initialized   bool
+	filePrefix    string
+	closed        bool
+	close         chan bool // the log is closed, and wait to write all the logs
+	autoFlush     bool
+	flushInterval time.Duration
 }
 
 type logMsg struct {
@@ -26,11 +28,19 @@ type logMsg struct {
 
 // NewFileLogger get a file logger
 func NewFileLogger(level Level, logDir string, filePrefix string) Logger {
+	logger := NewFileLoggerWithAutoFlush(level, logDir, filePrefix, false, time.Duration(0))
+	return logger
+}
+
+// NewFileLoggerWithAutoFlush get a file logger
+func NewFileLoggerWithAutoFlush(level Level, logDir string, filePrefix string, autoFlush bool, flushInterval time.Duration) Logger {
 	logger := &fileLogger{
-		logDir:     logDir,
-		in:         make(chan logMsg, 10),
-		close:      make(chan bool, 1),
-		filePrefix: filePrefix,
+		logDir:        logDir,
+		in:            make(chan logMsg, 10),
+		close:         make(chan bool, 1),
+		filePrefix:    filePrefix,
+		autoFlush:     autoFlush,
+		flushInterval: flushInterval,
 	}
 	// init baseLogger
 	logger.baseLogger.init(logger, level)
@@ -44,6 +54,7 @@ func (l *fileLogger) Log(format string, args ...interface{}) {
 	if l.initialized && !l.closed {
 		format = fmt.Sprintf("[%s] ", time.Now().Format("2006-01-02 15:04:05")) + format
 		format = fmt.Sprintf(format, args...)
+		format = l.builder.AppendRowTerminator(format)
 		l.in <- logMsg{
 			log:    format,
 			closed: false,
@@ -89,6 +100,7 @@ func (l *fileLogger) init() error {
 	l.writer = bufio.NewWriter(f)
 	l.initialized = true
 	l.start()
+	l.startAutoFlush()
 	return nil
 }
 
@@ -118,4 +130,35 @@ func (l *fileLogger) write() {
 
 func (l *fileLogger) innerLog(format string, args ...interface{}) {
 	fmt.Printf(format+"\n", args...)
+}
+
+// startAutoFlush start to auto flush log to file per flushInterval
+// if buffered is empty by 10 times checked, to delay wait next check
+func (l *fileLogger) startAutoFlush() {
+	if !l.autoFlush || l.flushInterval <= 0 {
+		return
+	}
+	go func() {
+		wait := l.flushInterval
+		nop := 0
+		delayCheckCount := 10
+		for {
+			<-time.After(wait)
+			if l.closed || l.writer == nil {
+				l.innerLog("autoFlush stopped")
+				return
+			}
+			if l.writer.Buffered() > 0 {
+				l.writer.Flush()
+				wait = l.flushInterval
+				nop = 0
+			} else {
+				nop++
+				if nop >= delayCheckCount {
+					wait += l.flushInterval
+					nop = 0
+				}
+			}
+		}
+	}()
 }

@@ -19,6 +19,7 @@ func NewConsoleLogger(level Level) Logger {
 // Log write a format log to console
 func (l *consoleLogger) Log(format string, args ...interface{}) {
 	format = fmt.Sprintf(format, args...)
+	format = l.builder.AppendRowTerminator(format)
 	fmt.Print(format)
 }
 
