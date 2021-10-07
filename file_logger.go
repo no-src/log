@@ -78,7 +78,7 @@ func (l *fileLogger) init() error {
 
 	_, err := os.Stat(logDir)
 	if os.IsNotExist(err) {
-		err = os.MkdirAll(logDir, 0666)
+		err = os.MkdirAll(logDir, 0766)
 		if err != nil {
 			l.innerLog("init file logger err, can't create the log dir. %s", err)
 			return err
