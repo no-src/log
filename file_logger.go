@@ -27,13 +27,12 @@ type logMsg struct {
 }
 
 // NewFileLogger get a file logger
-func NewFileLogger(level Level, logDir string, filePrefix string) Logger {
-	logger := NewFileLoggerWithAutoFlush(level, logDir, filePrefix, false, time.Duration(0))
-	return logger
+func NewFileLogger(level Level, logDir string, filePrefix string) (Logger, error) {
+	return NewFileLoggerWithAutoFlush(level, logDir, filePrefix, false, time.Duration(0))
 }
 
 // NewFileLoggerWithAutoFlush get a file logger
-func NewFileLoggerWithAutoFlush(level Level, logDir string, filePrefix string, autoFlush bool, flushInterval time.Duration) Logger {
+func NewFileLoggerWithAutoFlush(level Level, logDir string, filePrefix string, autoFlush bool, flushInterval time.Duration) (Logger, error) {
 	logger := &fileLogger{
 		logDir:        logDir,
 		in:            make(chan logMsg, 10),
@@ -45,8 +44,8 @@ func NewFileLoggerWithAutoFlush(level Level, logDir string, filePrefix string, a
 	// init baseLogger
 	logger.baseLogger.init(logger, level)
 	// init fileLogger
-	logger.init()
-	return logger
+	err := logger.init()
+	return logger, err
 }
 
 // Log write a format log to file
@@ -124,7 +123,9 @@ func (l *fileLogger) write() {
 		return
 	}
 	if l.initialized && l.writer != nil && len(msg.log) > 0 {
-		l.writer.WriteString(msg.log)
+		if _, err := l.writer.WriteString(msg.log); err != nil {
+			l.innerLog("file logger write log error. %s", err)
+		}
 	}
 }
 
