@@ -35,6 +35,10 @@ func Close() error {
 	return defaultLogger.Close()
 }
 
+func DefaultLogger() Logger {
+	return defaultLogger
+}
+
 func init() {
 	if defaultLogger == nil {
 		defaultLogger = NewConsoleLogger(InfoLevel)

@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"os"
 )
 
 type consoleLogger struct {
@@ -25,4 +26,8 @@ func (l *consoleLogger) Log(format string, args ...interface{}) {
 
 func (l *consoleLogger) Close() error {
 	return nil
+}
+
+func (l *consoleLogger) Write(p []byte) (n int, err error) {
+	return os.Stdout.Write(p)
 }

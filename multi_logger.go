@@ -55,3 +55,15 @@ func (l *multiLogger) Close() error {
 	}
 	return err
 }
+
+func (l *multiLogger) Write(p []byte) (n int, err error) {
+	n = len(p)
+	for _, logger := range l.loggers {
+		nn, writeErr := logger.Write(p)
+		if writeErr != nil {
+			err = writeErr
+			n = nn
+		}
+	}
+	return n, err
+}

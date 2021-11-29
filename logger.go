@@ -1,5 +1,7 @@
 package log
 
+import "io"
+
 // Logger define a universal log interface
 type Logger interface {
 	Debug(format string, args ...interface{})
@@ -11,6 +13,7 @@ type Logger interface {
 
 // Writer implement write to log
 type Writer interface {
+	io.Writer
 	// Log write log to output
 	Log(format string, args ...interface{})
 	// Close to close log and release dependencies

@@ -2,6 +2,7 @@ package log
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -22,7 +23,7 @@ type fileLogger struct {
 }
 
 type logMsg struct {
-	log    string
+	log    []byte
 	closed bool
 }
 
@@ -50,15 +51,10 @@ func NewFileLoggerWithAutoFlush(level Level, logDir string, filePrefix string, a
 
 // Log write a format log to file
 func (l *fileLogger) Log(format string, args ...interface{}) {
-	if l.initialized && !l.closed {
-		format = fmt.Sprintf("[%s] ", time.Now().Format("2006-01-02 15:04:05")) + format
-		format = fmt.Sprintf(format, args...)
-		format = l.builder.AppendRowTerminator(format)
-		l.in <- logMsg{
-			log:    format,
-			closed: false,
-		}
-	}
+	format = fmt.Sprintf("[%s] ", time.Now().Format("2006-01-02 15:04:05")) + format
+	format = fmt.Sprintf(format, args...)
+	format = l.builder.AppendRowTerminator(format)
+	l.Write([]byte(format))
 }
 
 func (l *fileLogger) Close() error {
@@ -123,7 +119,7 @@ func (l *fileLogger) write() {
 		return
 	}
 	if l.initialized && l.writer != nil && len(msg.log) > 0 {
-		if _, err := l.writer.WriteString(msg.log); err != nil {
+		if _, err := l.writer.Write(msg.log); err != nil {
 			l.innerLog("file logger write log error. %s", err)
 		}
 	}
@@ -162,4 +158,16 @@ func (l *fileLogger) startAutoFlush() {
 			}
 		}
 	}()
+}
+
+func (l *fileLogger) Write(p []byte) (n int, err error) {
+	if l.initialized && !l.closed {
+		l.in <- logMsg{
+			log:    p,
+			closed: false,
+		}
+		return len(p), nil
+	} else {
+		return 0, errors.New("file logger is uninitialized or closed")
+	}
 }

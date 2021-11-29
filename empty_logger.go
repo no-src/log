@@ -32,3 +32,7 @@ func (l *emptyLogger) Log(format string, args ...interface{}) {
 func (l *emptyLogger) Close() error {
 	return nil
 }
+
+func (l *emptyLogger) Write(p []byte) (n int, err error) {
+	return len(p), nil
+}
