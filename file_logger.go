@@ -25,7 +25,13 @@ type fileLogger struct {
 type logMsg struct {
 	log    []byte
 	closed bool
+	flush  bool
 }
+
+var (
+	flushLogMsg = logMsg{flush: true}
+	closeLogMsg = logMsg{closed: true}
+)
 
 // NewFileLogger get a file logger
 func NewFileLogger(level Level, logDir string, filePrefix string) (Logger, error) {
@@ -36,7 +42,7 @@ func NewFileLogger(level Level, logDir string, filePrefix string) (Logger, error
 func NewFileLoggerWithAutoFlush(level Level, logDir string, filePrefix string, autoFlush bool, flushInterval time.Duration) (Logger, error) {
 	logger := &fileLogger{
 		logDir:        logDir,
-		in:            make(chan logMsg, 10),
+		in:            make(chan logMsg, 100),
 		close:         make(chan bool, 1),
 		filePrefix:    filePrefix,
 		autoFlush:     autoFlush,
@@ -61,7 +67,7 @@ func (l *fileLogger) Close() error {
 	// stop a new log to write
 	l.closed = true
 	// send a closed message
-	l.in <- logMsg{closed: true}
+	l.in <- closeLogMsg
 	// wait to receive a close finished message
 	<-l.close
 	return nil
@@ -116,9 +122,12 @@ func (l *fileLogger) write() {
 			l.writer.Flush()
 		}
 		l.close <- true
-		return
-	}
-	if l.initialized && l.writer != nil && len(msg.log) > 0 {
+	} else if msg.flush && l.initialized && l.writer != nil && l.writer.Buffered() > 0 {
+		// received a flush message, flush logs to file
+		if err := l.writer.Flush(); err != nil {
+			l.innerLog("file logger flush log error. %s", err)
+		}
+	} else if l.initialized && l.writer != nil && len(msg.log) > 0 {
 		if _, err := l.writer.Write(msg.log); err != nil {
 			l.innerLog("file logger write log error. %s", err)
 		}
@@ -146,7 +155,7 @@ func (l *fileLogger) startAutoFlush() {
 				return
 			}
 			if l.writer.Buffered() > 0 {
-				l.writer.Flush()
+				l.in <- flushLogMsg
 				wait = l.flushInterval
 				nop = 0
 			} else {
