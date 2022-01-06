@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
@@ -20,6 +21,7 @@ type fileLogger struct {
 	close         chan bool // the log is closed, and wait to write all the logs
 	autoFlush     bool
 	flushInterval time.Duration
+	mu            sync.Mutex // avoid data race for writer
 }
 
 type logMsg struct {
@@ -47,6 +49,7 @@ func NewFileLoggerWithAutoFlush(level Level, logDir string, filePrefix string, a
 		filePrefix:    filePrefix,
 		autoFlush:     autoFlush,
 		flushInterval: flushInterval,
+		mu:            sync.Mutex{},
 	}
 	// init baseLogger
 	logger.baseLogger.init(logger, level)
@@ -116,6 +119,8 @@ func (l *fileLogger) start() {
 
 func (l *fileLogger) write() {
 	msg := <-l.in
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	// if received a closed message, flush logs to file, and notify close finished.
 	if msg.closed {
 		if l.initialized && l.writer != nil {
@@ -151,10 +156,13 @@ func (l *fileLogger) startAutoFlush() {
 		for {
 			<-time.After(wait)
 			if l.closed || l.writer == nil {
-				l.innerLog("autoFlush stopped")
+				l.innerLog("auto flush stopped")
 				return
 			}
-			if l.writer.Buffered() > 0 {
+			l.mu.Lock()
+			buffered := l.writer.Buffered()
+			l.mu.Unlock()
+			if buffered > 0 {
 				l.in <- flushLogMsg
 				wait = l.flushInterval
 				nop = 0
@@ -169,13 +177,21 @@ func (l *fileLogger) startAutoFlush() {
 	}()
 }
 
+// Write see io.Writer
 func (l *fileLogger) Write(p []byte) (n int, err error) {
+	// copy data to avoid data race from caller
+	pLen := len(p)
+	if pLen == 0 {
+		return 0, nil
+	}
+	cp := make([]byte, pLen)
+	copy(cp, p)
 	if l.initialized && !l.closed {
 		l.in <- logMsg{
-			log:    p,
+			log:    cp,
 			closed: false,
 		}
-		return len(p), nil
+		return pLen, nil
 	} else {
 		return 0, errors.New("file logger is uninitialized or closed")
 	}
