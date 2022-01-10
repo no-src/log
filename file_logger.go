@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/no-src/log/internal/cbool"
 	"os"
 	"path/filepath"
 	"sync"
@@ -17,7 +18,7 @@ type fileLogger struct {
 	writer        *bufio.Writer
 	initialized   bool
 	filePrefix    string
-	closed        bool
+	closed        *cbool.CBool
 	close         chan bool // the log is closed, and wait to write all the logs
 	autoFlush     bool
 	flushInterval time.Duration
@@ -50,6 +51,7 @@ func NewFileLoggerWithAutoFlush(level Level, logDir string, filePrefix string, a
 		autoFlush:     autoFlush,
 		flushInterval: flushInterval,
 		mu:            sync.Mutex{},
+		closed:        cbool.New(false),
 	}
 	// init baseLogger
 	logger.baseLogger.init(logger, level)
@@ -68,7 +70,7 @@ func (l *fileLogger) Log(format string, args ...interface{}) {
 
 func (l *fileLogger) Close() error {
 	// stop a new log to write
-	l.closed = true
+	l.closed.Set(true)
 	// send a closed message
 	l.in <- closeLogMsg
 	// wait to receive a close finished message
@@ -155,8 +157,7 @@ func (l *fileLogger) startAutoFlush() {
 		delayCheckCount := 10
 		for {
 			<-time.After(wait)
-			if l.closed || l.writer == nil {
-				l.innerLog("auto flush stopped")
+			if l.closed.Get() || l.writer == nil {
 				return
 			}
 			l.mu.Lock()
@@ -186,7 +187,7 @@ func (l *fileLogger) Write(p []byte) (n int, err error) {
 	}
 	cp := make([]byte, pLen)
 	copy(cp, p)
-	if l.initialized && !l.closed {
+	if l.initialized && !l.closed.Get() {
 		l.in <- logMsg{
 			log:    cp,
 			closed: false,
