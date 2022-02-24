@@ -11,30 +11,37 @@ func InitDefaultLogger(logger Logger) {
 	}
 }
 
+// Debug write the debug log
 func Debug(format string, args ...interface{}) {
 	defaultLogger.Debug(format, args...)
 }
 
+// Info write the info log
 func Info(format string, args ...interface{}) {
 	defaultLogger.Info(format, args...)
 }
 
+// Warn write the warn log
 func Warn(format string, args ...interface{}) {
 	defaultLogger.Warn(format, args...)
 }
 
+// Error write the error log
 func Error(err error, format string, args ...interface{}) {
 	defaultLogger.Error(err, format, args...)
 }
 
+// Log write the log without level
 func Log(format string, args ...interface{}) {
 	defaultLogger.Log(format, args...)
 }
 
+// Close close the current logger
 func Close() error {
 	return defaultLogger.Close()
 }
 
+// DefaultLogger return the global default logger
 func DefaultLogger() Logger {
 	return defaultLogger
 }

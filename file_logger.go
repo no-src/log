@@ -193,7 +193,6 @@ func (l *fileLogger) Write(p []byte) (n int, err error) {
 			closed: false,
 		}
 		return pLen, nil
-	} else {
-		return 0, errors.New("file logger is uninitialized or closed")
 	}
+	return 0, errors.New("file logger is uninitialized or closed")
 }
