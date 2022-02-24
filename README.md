@@ -5,6 +5,7 @@
 [![License](https://img.shields.io/github/license/no-src/log)](https://github.com/no-src/log/blob/main/LICENSE)
 [![Go Reference](https://pkg.go.dev/badge/github.com/no-src/log.svg)](https://pkg.go.dev/github.com/no-src/log)
 [![Go Report Card](https://goreportcard.com/badge/github.com/no-src/log)](https://goreportcard.com/report/github.com/no-src/log)
+[![codecov](https://codecov.io/gh/no-src/log/branch/main/graph/badge.svg?token=8Q20UR86EW)](https://codecov.io/gh/no-src/log)
 [![Release](https://img.shields.io/github/v/release/no-src/log)](https://github.com/no-src/log/releases)
 
 ## Installation
