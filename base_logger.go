@@ -58,9 +58,6 @@ func (l *baseLogger) init(wb writeBuilder, level Level) {
 	l.builder = wb
 	l.Writer = wb
 	l.level = level
-	if l.builder == nil {
-		l.builder = l
-	}
 }
 
 func (l *baseLogger) AppendRowTerminator(format string) string {

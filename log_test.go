@@ -12,6 +12,7 @@ func TestLogs(t *testing.T) {
 	Error(errors.New("log err"), "%s,test error log", "hello")
 	Log("%s,test log log", "hello")
 	Log("%s,test log log again", "world")
+	DefaultLogger().Write([]byte("hello logger"))
 }
 
 func TestConsoleLogger(t *testing.T) {
@@ -26,14 +27,14 @@ func TestEmptyLogger(t *testing.T) {
 	TestLogs(t)
 }
 
-func TestMultiLogger(t *testing.T) {
-	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(DebugLevel)))
+func TestMinLogLevel(t *testing.T) {
+	InitDefaultLogger(NewConsoleLogger(InfoLevel))
 	defer Close()
 	TestLogs(t)
 }
 
-func TestMinLogLevel(t *testing.T) {
-	InitDefaultLogger(NewConsoleLogger(InfoLevel))
+func TestNilLogger(t *testing.T) {
+	InitDefaultLogger(nil)
 	defer Close()
 	TestLogs(t)
 }
