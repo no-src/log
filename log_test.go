@@ -12,6 +12,7 @@ func TestLogs(t *testing.T) {
 	Error(errors.New("log err"), "%s,test error log", "hello")
 	Log("%s,test log log", "hello")
 	Log("%s,test log log again", "world")
+	DefaultLogger().Write([]byte(""))
 	DefaultLogger().Write([]byte("hello logger"))
 }
 
