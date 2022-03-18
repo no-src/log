@@ -34,6 +34,12 @@ type logMsg struct {
 var (
 	flushLogMsg = logMsg{flush: true}
 	closeLogMsg = logMsg{closed: true}
+	newWriter   = bufio.NewWriter
+	stat        = os.Stat
+	isNotExist  = os.IsNotExist
+	mkdirAll    = os.MkdirAll
+	create      = os.Create
+	openFile    = os.OpenFile
 )
 
 // NewFileLogger get a file logger
@@ -82,28 +88,28 @@ func (l *fileLogger) init() error {
 	logDir := filepath.Clean(l.logDir)
 	logFile := logDir + "/" + filepath.Clean(l.filePrefix) + time.Now().Format("20060102") + ".log"
 
-	_, err := os.Stat(logDir)
-	if os.IsNotExist(err) {
-		err = os.MkdirAll(logDir, 0766)
+	_, err := stat(logDir)
+	if isNotExist(err) {
+		err = mkdirAll(logDir, 0766)
 		if err != nil {
 			l.innerLog("init file logger err, can't create the log dir. %s", err)
 			return err
 		}
 	}
-	_, err = os.Stat(logFile)
-	if os.IsNotExist(err) {
-		_, err = os.Create(logFile)
+	_, err = stat(logFile)
+	if isNotExist(err) {
+		_, err = create(logFile)
 		if err != nil {
 			l.innerLog("init file logger err, can't create the log file. %s", err)
 			return err
 		}
 	}
-	f, err := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+	f, err := openFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
 		l.innerLog("init file logger err, can't open the log file. %s", err)
 		return err
 	}
-	l.writer = bufio.NewWriter(f)
+	l.writer = newWriter(f)
 	l.initialized = true
 	l.start()
 	l.startAutoFlush()
