@@ -31,6 +31,13 @@ func Error(err error, format string, args ...interface{}) {
 	defaultLogger.Error(err, format, args...)
 }
 
+// ErrorIf write the error log if err is not nil
+func ErrorIf(err error, format string, args ...interface{}) {
+	if err != nil {
+		Error(err, format, args...)
+	}
+}
+
 // Log write the log without level
 func Log(format string, args ...interface{}) {
 	defaultLogger.Log(format, args...)

@@ -6,12 +6,14 @@ import (
 )
 
 func TestLogs(t *testing.T) {
-	Debug("%s,test debug log", "hello")
-	Info("%s,test info log", "hello")
-	Warn("%s,test warn log", "hello")
+	Debug("%s, test debug log", "hello")
+	Info("%s, test info log", "hello")
+	Warn("%s, test warn log", "hello")
 	Error(errors.New("log err"), "%s,test error log", "hello")
-	Log("%s,test log log", "hello")
-	Log("%s,test log log again", "world")
+	ErrorIf(errors.New("log err from ErrorIf"), "%s, test error log", "hello")
+	ErrorIf(nil, "%s, this error log will not be printed", "hello")
+	Log("%s, test log log", "hello")
+	Log("%s, test log log again", "world")
 	DefaultLogger().Write([]byte(""))
 	DefaultLogger().Write([]byte("hello logger"))
 }
