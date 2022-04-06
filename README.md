@@ -24,10 +24,11 @@ Current support following loggers
 For example, init a file logger, to write logs.
 
 ```go
-log.InitDefaultLogger(NewFileLogger(DebugLevel,"./logs",""))
-log.Debug("%s,test debug log", "hello")
-log.Info("%s,test info log", "hello")
-log.Warn("%s,test warn log", "hello")
-log.Error(errors.New("log err"), "%s,test error log", "hello")
-log.Log("%s,test log log", "hello")
+log.InitDefaultLogger(log.NewFileLogger(log.DebugLevel, "./logs", ""))
+log.Debug("%s, test debug log", "hello")
+log.Info("%s, test info log", "hello")
+log.Warn("%s, test warn log", "hello")
+log.Error(errors.New("log err"), "%s, test error log", "hello")
+log.ErrorIf(errors.New("log err"), "%s, test error log", "hello")
+log.Log("%s, test log log", "hello")
 ```
