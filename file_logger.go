@@ -12,9 +12,20 @@ import (
 	"github.com/no-src/log/internal/cbool"
 )
 
+var (
+	flushLogMsg = logMsg{flush: true}
+	closeLogMsg = logMsg{closed: true}
+	newWriter   = bufio.NewWriter
+	stat        = os.Stat
+	isNotExist  = os.IsNotExist
+	mkdirAll    = os.MkdirAll
+	create      = os.Create
+	openFile    = os.OpenFile
+)
+
 type fileLogger struct {
 	baseLogger
-	
+
 	logDir        string
 	in            chan logMsg
 	writer        *bufio.Writer
@@ -32,17 +43,6 @@ type logMsg struct {
 	closed bool
 	flush  bool
 }
-
-var (
-	flushLogMsg = logMsg{flush: true}
-	closeLogMsg = logMsg{closed: true}
-	newWriter   = bufio.NewWriter
-	stat        = os.Stat
-	isNotExist  = os.IsNotExist
-	mkdirAll    = os.MkdirAll
-	create      = os.Create
-	openFile    = os.OpenFile
-)
 
 // NewFileLogger get a file logger
 func NewFileLogger(level Level, logDir string, filePrefix string) (Logger, error) {

@@ -5,6 +5,12 @@ import (
 	"strings"
 )
 
+var (
+	loggerFormat      = "[%s] %s"             // [level] content
+	errorLoggerFormat = loggerFormat + ". %s" // [level] content. error
+	defaultTerminator = "\n"
+)
+
 // baseLogger Implement basic logger operation
 type baseLogger struct {
 	Writer
@@ -40,10 +46,6 @@ func (l *baseLogger) Error(err error, format string, args ...interface{}) {
 		l.Writer.Log(format, args...)
 	}
 }
-
-var loggerFormat = "[%s] %s"                  // [level] content
-var errorLoggerFormat = loggerFormat + ". %s" // [level] content. error
-var defaultTerminator = "\n"
 
 func (l *baseLogger) BuildLog(level Level, format string) string {
 	format = fmt.Sprintf(loggerFormat, level.String(), format)
