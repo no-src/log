@@ -8,7 +8,7 @@ import (
 func TestFileLogger(t *testing.T) {
 	fileLogger, err := NewFileLogger(DebugLevel, "./logs", "ns")
 	if err != nil {
-		t.FailNow()
+		t.Fatal(err)
 	}
 	InitDefaultLogger(fileLogger)
 	defer Close()
@@ -19,7 +19,7 @@ func TestFileLoggerWithAutoFlush(t *testing.T) {
 	wait := time.Second * 1
 	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(DebugLevel, "./logs", "ns", true, wait)
 	if err != nil {
-		t.FailNow()
+		t.Fatal(err)
 	}
 	InitDefaultLogger(autoFlushFileLogger)
 	TestLogs(t)
@@ -30,7 +30,7 @@ func TestFileLoggerWithAutoFlushWithCloseWhenWrite(t *testing.T) {
 	wait := time.Second * 1
 	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(DebugLevel, "./logs", "ns", true, wait)
 	if err != nil {
-		t.FailNow()
+		t.Fatal(err)
 	}
 	InitDefaultLogger(autoFlushFileLogger)
 	go func() {
@@ -44,7 +44,7 @@ func TestFileLoggerWithAutoFlushWithFlushDelay(t *testing.T) {
 	wait := time.Millisecond * 10
 	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(DebugLevel, "./logs", "ns", true, wait)
 	if err != nil {
-		t.FailNow()
+		t.Fatal(err)
 	}
 	InitDefaultLogger(autoFlushFileLogger)
 	<-time.After(wait * 20)
@@ -53,7 +53,7 @@ func TestFileLoggerWithAutoFlushWithFlushDelay(t *testing.T) {
 func TestConsoleLoggerAndFileLogger(t *testing.T) {
 	fileLogger, err := NewFileLogger(DebugLevel, "./multi_logs", "ns")
 	if err != nil {
-		t.FailNow()
+		t.Fatal(err)
 	}
 	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(DebugLevel), fileLogger))
 	defer Close()

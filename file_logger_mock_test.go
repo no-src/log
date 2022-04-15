@@ -19,7 +19,7 @@ func TestFileLoggerWithNotExistFile(t *testing.T) {
 	}()
 	fileLogger, err := NewFileLogger(DebugLevel, "./logs", "ns")
 	if err != nil {
-		t.FailNow()
+		t.Fatal(err)
 	}
 	InitDefaultLogger(fileLogger)
 	defer Close()
@@ -34,7 +34,7 @@ func TestFileLoggerWithCreateLogDirError(t *testing.T) {
 	}()
 	_, err := NewFileLogger(DebugLevel, "./logs", "ns")
 	if err == nil {
-		t.FailNow()
+		t.Fatal("create file logger expect to get an error but get nil")
 	}
 }
 
@@ -46,7 +46,7 @@ func TestFileLoggerWithCreateLogFileError(t *testing.T) {
 	}()
 	_, err := NewFileLogger(DebugLevel, "./logs", "ns")
 	if err == nil {
-		t.FailNow()
+		t.Fatal("create file logger expect to get an error but get nil")
 	}
 }
 
@@ -58,7 +58,7 @@ func TestFileLoggerWithOpenLogFileError(t *testing.T) {
 	}()
 	_, err := NewFileLogger(DebugLevel, "./logs", "ns")
 	if err == nil {
-		t.FailNow()
+		t.Fatal("create file logger expect to get an error but get nil")
 	}
 }
 
@@ -70,7 +70,7 @@ func TestFileLoggerWithAutoFlushWithWriteError(t *testing.T) {
 	wait := time.Second * 1
 	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(DebugLevel, "./logs", "ns", true, wait)
 	if err != nil {
-		t.FailNow()
+		t.Fatal(err)
 	}
 	InitDefaultLogger(autoFlushFileLogger)
 	TestLogs(t)
@@ -87,7 +87,7 @@ func TestFileLoggerWithAutoFlushWithWriteErrorAndNoAutoFlush(t *testing.T) {
 	wait := time.Second * 1
 	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(DebugLevel, "./logs", "ns", false, wait)
 	if err != nil {
-		t.FailNow()
+		t.Fatal(err)
 	}
 	InitDefaultLogger(autoFlushFileLogger)
 	TestLogs(t)
