@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/no-src/log/internal/cbool"
 	"os"
 	"path/filepath"
 	"sync"
 	"time"
+
+	"github.com/no-src/log/internal/cbool"
 )
 
 type fileLogger struct {
