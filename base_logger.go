@@ -7,9 +7,10 @@ import (
 
 // baseLogger Implement basic logger operation
 type baseLogger struct {
-	level Level // min log level
 	Writer
 	builder
+
+	level Level // min log level
 }
 
 func (l *baseLogger) Debug(format string, args ...interface{}) {

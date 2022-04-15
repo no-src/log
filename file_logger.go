@@ -14,6 +14,7 @@ import (
 
 type fileLogger struct {
 	baseLogger
+	
 	logDir        string
 	in            chan logMsg
 	writer        *bufio.Writer
