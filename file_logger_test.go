@@ -15,7 +15,7 @@ func TestFileLogger(t *testing.T) {
 	TestLogs(t)
 }
 
-func TestFileLoggerWithAutoFlush(t *testing.T) {
+func TestFileLogger_WithAutoFlush(t *testing.T) {
 	wait := time.Second * 1
 	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(DebugLevel, "./logs", "ns", true, wait)
 	if err != nil {
@@ -26,7 +26,7 @@ func TestFileLoggerWithAutoFlush(t *testing.T) {
 	<-time.After(wait + time.Second)
 }
 
-func TestFileLoggerWithAutoFlushWithCloseWhenWrite(t *testing.T) {
+func TestFileLogger_WithAutoFlushWithCloseWhenWrite(t *testing.T) {
 	wait := time.Second * 1
 	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(DebugLevel, "./logs", "ns", true, wait)
 	if err != nil {
@@ -40,7 +40,7 @@ func TestFileLoggerWithAutoFlushWithCloseWhenWrite(t *testing.T) {
 	<-time.After(wait + time.Second)
 }
 
-func TestFileLoggerWithAutoFlushWithFlushDelay(t *testing.T) {
+func TestFileLogger_WithAutoFlushWithFlushDelay(t *testing.T) {
 	wait := time.Millisecond * 10
 	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(DebugLevel, "./logs", "ns", true, wait)
 	if err != nil {

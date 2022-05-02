@@ -11,7 +11,7 @@ func TestMultiLogger(t *testing.T) {
 	TestLogs(t)
 }
 
-func TestMultiLoggerWithError(t *testing.T) {
+func TestMultiLogger_WithError(t *testing.T) {
 	InitDefaultLogger(NewMultiLogger(newErrorLogger(DebugLevel)))
 	defer Close()
 	TestLogs(t)

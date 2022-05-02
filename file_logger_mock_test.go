@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func TestFileLoggerWithNotExistFile(t *testing.T) {
+func TestFileLogger_WithNotExistFile(t *testing.T) {
 	isNotExist = isNotExistAlwaysTrueMock
 	defer func() {
 		initOSMock()
@@ -26,7 +26,7 @@ func TestFileLoggerWithNotExistFile(t *testing.T) {
 	TestLogs(t)
 }
 
-func TestFileLoggerWithCreateLogDirError(t *testing.T) {
+func TestFileLogger_WithCreateLogDirError(t *testing.T) {
 	isNotExist = isNotExistAlwaysTrueMock
 	mkdirAll = mkdirAllErrorMock
 	defer func() {
@@ -38,7 +38,7 @@ func TestFileLoggerWithCreateLogDirError(t *testing.T) {
 	}
 }
 
-func TestFileLoggerWithCreateLogFileError(t *testing.T) {
+func TestFileLogger_WithCreateLogFileError(t *testing.T) {
 	isNotExist = isNotExistAlwaysTrueMock
 	create = createErrorMock
 	defer func() {
@@ -50,7 +50,7 @@ func TestFileLoggerWithCreateLogFileError(t *testing.T) {
 	}
 }
 
-func TestFileLoggerWithOpenLogFileError(t *testing.T) {
+func TestFileLogger_WithOpenLogFileError(t *testing.T) {
 	isNotExist = isNotExistAlwaysTrueMock
 	openFile = openFileErrorMock
 	defer func() {
@@ -62,7 +62,7 @@ func TestFileLoggerWithOpenLogFileError(t *testing.T) {
 	}
 }
 
-func TestFileLoggerWithAutoFlushWithWriteError(t *testing.T) {
+func TestFileLogger_WithAutoFlushWithWriteError(t *testing.T) {
 	initNewWriterErrorMock()
 	defer func() {
 		initNewWriterMock()
@@ -79,7 +79,7 @@ func TestFileLoggerWithAutoFlushWithWriteError(t *testing.T) {
 	<-time.After(wait + time.Second)
 }
 
-func TestFileLoggerWithAutoFlushWithWriteErrorAndNoAutoFlush(t *testing.T) {
+func TestFileLogger_WithAutoFlushWithWriteErrorAndNoAutoFlush(t *testing.T) {
 	initNewWriterErrorMock()
 	defer func() {
 		initNewWriterMock()
