@@ -32,10 +32,11 @@ func Error(err error, format string, args ...interface{}) {
 }
 
 // ErrorIf write the error log if err is not nil
-func ErrorIf(err error, format string, args ...interface{}) {
+func ErrorIf(err error, format string, args ...interface{}) error {
 	if err != nil {
 		Error(err, format, args...)
 	}
+	return err
 }
 
 // Log write the log without level
