@@ -12,6 +12,7 @@ func TestLogs(t *testing.T) {
 	Error(errors.New("log err"), "%s,test error log", "hello")
 	ErrorIf(errors.New("log err from ErrorIf"), "%s, test error log", "hello")
 	ErrorIf(nil, "%s, this error log will not be printed", "hello")
+	testSampleLogs()
 	Log("%s, test log log", "hello")
 	Log("%s, test log log again", "world")
 	DefaultLogger().Write([]byte(""))

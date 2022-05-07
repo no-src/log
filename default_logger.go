@@ -1,14 +1,26 @@
 package log
 
-var defaultLogger Logger
+var (
+	defaultLogger       Logger
+	defaultSampleLogger Logger
+)
+
+const defaultSampleRate = 1
 
 // InitDefaultLogger init a default logger
-// if InitDefaultLogger is not called, default is consoleLogger with InfoLevel
+// if not specified, default is consoleLogger with InfoLevel, and default sample rate is 1
 func InitDefaultLogger(logger Logger) {
+	InitDefaultLoggerWithSample(logger, defaultSampleRate)
+}
+
+// InitDefaultLoggerWithSample init a default logger and sample logger
+// if not specified, default is consoleLogger with InfoLevel, and default sample rate is 1
+func InitDefaultLoggerWithSample(logger Logger, sampleRate float64) {
 	defaultLogger = logger
 	if defaultLogger == nil {
 		defaultLogger = NewEmptyLogger()
 	}
+	defaultSampleLogger = NewDefaultSampleLogger(defaultLogger, sampleRate)
 }
 
 // Debug write the debug log
@@ -39,6 +51,34 @@ func ErrorIf(err error, format string, args ...interface{}) error {
 	return err
 }
 
+// DebugSample write the debug log by random sampling
+func DebugSample(format string, args ...interface{}) {
+	defaultSampleLogger.Debug(format, args...)
+}
+
+// InfoSample write the info log by random sampling
+func InfoSample(format string, args ...interface{}) {
+	defaultSampleLogger.Info(format, args...)
+}
+
+// WarnSample write the warn log by random sampling
+func WarnSample(format string, args ...interface{}) {
+	defaultSampleLogger.Warn(format, args...)
+}
+
+// ErrorSample write the error log by random sampling
+func ErrorSample(err error, format string, args ...interface{}) {
+	defaultSampleLogger.Error(err, format, args...)
+}
+
+// ErrorIfSample write the error log by random sampling if err is not nil
+func ErrorIfSample(err error, format string, args ...interface{}) error {
+	if err != nil {
+		ErrorSample(err, format, args...)
+	}
+	return err
+}
+
 // Log write the log without level
 func Log(format string, args ...interface{}) {
 	defaultLogger.Log(format, args...)
@@ -55,7 +95,5 @@ func DefaultLogger() Logger {
 }
 
 func init() {
-	if defaultLogger == nil {
-		defaultLogger = NewConsoleLogger(InfoLevel)
-	}
+	InitDefaultLogger(NewConsoleLogger(InfoLevel))
 }

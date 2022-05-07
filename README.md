@@ -20,15 +20,41 @@ Current support following loggers
 - console logger
 - file logger
 - multi logger
+- sample logger
 
 For example, init a file logger, to write logs.
 
 ```go
-log.InitDefaultLogger(log.NewFileLogger(log.DebugLevel, "./logs", ""))
-log.Debug("%s, test debug log", "hello")
-log.Info("%s, test info log", "hello")
-log.Warn("%s, test warn log", "hello")
-log.Error(errors.New("log err"), "%s, test error log", "hello")
-log.ErrorIf(errors.New("log err"), "%s, test error log", "hello")
-log.Log("%s, test log log", "hello")
+package main
+
+import (
+	"errors"
+
+	"github.com/no-src/log"
+)
+
+func main() {
+	// init default logger
+	if logger, err := log.NewFileLogger(log.DebugLevel, "./logs", ""); err == nil {
+		log.InitDefaultLoggerWithSample(logger, 0.6)
+	} else {
+		log.Error(err, "init file logger error")
+	}
+	defer log.Close()
+
+	// use default logger
+	log.Debug("%s, test debug log", "hello")
+	log.Info("%s, test info log", "hello")
+	log.Warn("%s, test warn log", "hello")
+	log.Error(errors.New("log err"), "%s, test error log", "hello")
+	log.ErrorIf(errors.New("log err"), "%s, test error log", "hello")
+	log.Log("%s, test log log", "hello")
+
+	// use default logger by random sampling
+	log.DebugSample("[sample] %s, test debug log", "hello")
+	log.InfoSample("[sample] %s, test info log", "hello")
+	log.WarnSample("[sample] %s, test warn log", "hello")
+	log.ErrorSample(errors.New("log err"), "[sample] %s,test error log", "hello")
+	log.ErrorIfSample(errors.New("log err from ErrorIfSample"), "[sample] %s, test error log", "hello")
+}
 ```
