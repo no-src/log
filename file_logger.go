@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -88,7 +89,11 @@ func (l *fileLogger) Close() error {
 
 func (l *fileLogger) init() error {
 	logDir := filepath.Clean(l.logDir)
-	logFile := logDir + "/" + filepath.Clean(l.filePrefix) + time.Now().Format("20060102") + ".log"
+	prefix := strings.TrimSpace(l.filePrefix)
+	if len(prefix) > 0 {
+		prefix = filepath.Clean(prefix)
+	}
+	logFile := logDir + "/" + prefix + time.Now().Format("20060102") + ".log"
 
 	_, err := stat(logDir)
 	if isNotExist(err) {
