@@ -20,29 +20,27 @@ type baseLogger struct {
 }
 
 func (l *baseLogger) Debug(format string, args ...interface{}) {
-	if checkLogLevel(l.level, DebugLevel) {
-		format = l.builder.BuildLog(DebugLevel, format)
-		l.Writer.Log(format, args...)
-	}
+	l.log(DebugLevel, format, args...)
 }
 
 func (l *baseLogger) Info(format string, args ...interface{}) {
-	if checkLogLevel(l.level, InfoLevel) {
-		format = l.builder.BuildLog(InfoLevel, format)
-		l.Writer.Log(format, args...)
-	}
+	l.log(InfoLevel, format, args...)
 }
 
 func (l *baseLogger) Warn(format string, args ...interface{}) {
-	if checkLogLevel(l.level, WarnLevel) {
-		format = l.builder.BuildLog(WarnLevel, format)
-		l.Writer.Log(format, args...)
-	}
+	l.log(WarnLevel, format, args...)
 }
 
 func (l *baseLogger) Error(err error, format string, args ...interface{}) {
 	if checkLogLevel(l.level, ErrorLevel) {
 		format = l.builder.BuildErrorLog(ErrorLevel, err, format)
+		l.Writer.Log(format, args...)
+	}
+}
+
+func (l *baseLogger) log(lvl Level, format string, args ...interface{}) {
+	if checkLogLevel(l.level, lvl) {
+		format = l.builder.BuildLog(lvl, format)
 		l.Writer.Log(format, args...)
 	}
 }
