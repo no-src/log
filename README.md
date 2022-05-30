@@ -10,7 +10,9 @@
 
 ## Installation
 
-`go get -u github.com/no-src/log`
+```bash
+go get -u github.com/no-src/log
+```
 
 ## Quick Start
 
