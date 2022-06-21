@@ -2,83 +2,64 @@ package log
 
 import (
 	"fmt"
-	"strings"
-)
-
-var (
-	loggerFormat      = "[%s] %s"             // [level] content
-	errorLoggerFormat = loggerFormat + ". %s" // [level] content. error
-	defaultTerminator = "\n"
+	"github.com/no-src/log/content"
+	"github.com/no-src/log/formatter"
+	"github.com/no-src/log/level"
 )
 
 // baseLogger Implement basic logger operation
 type baseLogger struct {
 	Writer
-	builder
 
-	level Level // min log level
+	lvl        level.Level // min log level
+	f          formatter.Formatter
+	appendTime bool
 }
 
 func (l *baseLogger) Debug(format string, args ...interface{}) {
-	l.log(DebugLevel, format, args...)
+	l.log(level.DebugLevel, format, args...)
 }
 
 func (l *baseLogger) Info(format string, args ...interface{}) {
-	l.log(InfoLevel, format, args...)
+	l.log(level.InfoLevel, format, args...)
 }
 
 func (l *baseLogger) Warn(format string, args ...interface{}) {
-	l.log(WarnLevel, format, args...)
+	l.log(level.WarnLevel, format, args...)
 }
 
 func (l *baseLogger) Error(err error, format string, args ...interface{}) {
-	if checkLogLevel(l.level, ErrorLevel) {
-		format = l.builder.BuildErrorLog(ErrorLevel, err, format)
-		l.Writer.Log(format, args...)
+	l.logWithErr(err, level.ErrorLevel, format, args...)
+}
+
+// Log write a format log
+func (l *baseLogger) Log(format string, args ...interface{}) {
+	format = fmt.Sprintf(formatter.AppendRowTerminator(format), args...)
+	l.Write([]byte(format))
+}
+
+func (l *baseLogger) log(lvl level.Level, format string, args ...interface{}) {
+	l.logWithErr(nil, lvl, format, args...)
+}
+
+func (l *baseLogger) logWithErr(err error, lvl level.Level, format string, args ...interface{}) {
+	if checkLogLevel(l.lvl, lvl) {
+		data, _ := l.f.Serialize(content.NewContent(lvl, format, args, err, l.appendTime))
+		l.Log(string(data))
 	}
 }
 
-func (l *baseLogger) log(lvl Level, format string, args ...interface{}) {
-	if checkLogLevel(l.level, lvl) {
-		format = l.builder.BuildLog(lvl, format)
-		l.Writer.Log(format, args...)
-	}
+func (l *baseLogger) Close() error {
+	return nil
 }
 
-func (l *baseLogger) BuildLog(level Level, format string) string {
-	format = fmt.Sprintf(loggerFormat, level.String(), format)
-	return format
+func (l *baseLogger) init(w Writer, lvl level.Level, appendTime bool) {
+	l.Writer = w
+	l.lvl = lvl
+	l.f = formatter.Default()
+	l.appendTime = appendTime
 }
 
-func (l *baseLogger) BuildErrorLog(level Level, err error, format string) string {
-	format = fmt.Sprintf(errorLoggerFormat, level.String(), format, err)
-	return format
-}
-
-func (l *baseLogger) init(wb writeBuilder, level Level) {
-	l.builder = wb
-	l.Writer = wb
-	l.level = level
-}
-
-func (l *baseLogger) AppendRowTerminator(format string) string {
-	if !strings.HasSuffix(format, defaultTerminator) {
-		format = format + defaultTerminator
-	}
-	return format
-}
-
-type builder interface {
-	BuildLog(level Level, format string) string
-	BuildErrorLog(level Level, err error, format string) string
-	AppendRowTerminator(format string) string
-}
-
-type writeBuilder interface {
-	Writer
-	builder
-}
-
-func checkLogLevel(level Level, currentLevel Level) bool {
-	return currentLevel >= level
+func checkLogLevel(lvl level.Level, currentLevel level.Level) bool {
+	return currentLevel >= lvl
 }

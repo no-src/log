@@ -3,6 +3,8 @@ package log
 import (
 	"errors"
 	"testing"
+
+	"github.com/no-src/log/level"
 )
 
 func TestSampleLogger(t *testing.T) {
@@ -19,7 +21,7 @@ func TestSampleLogger(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			InitDefaultLogger(NewDefaultSampleLogger(NewConsoleLogger(DebugLevel), tc.sampleRate))
+			InitDefaultLogger(NewDefaultSampleLogger(NewConsoleLogger(level.DebugLevel), tc.sampleRate))
 			TestLogs(t)
 			Close()
 		})

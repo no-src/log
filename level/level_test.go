@@ -1,4 +1,4 @@
-package log
+package level
 
 import (
 	"testing"
@@ -23,6 +23,15 @@ func TestLevel(t *testing.T) {
 			actual := Level(tc.lvl).String()
 			if actual != tc.expect {
 				t.Errorf("get log level error, [%d] expect:%s, actual:%s", tc.lvl, tc.expect, actual)
+				return
+			}
+			marshalData, err := Level(tc.lvl).MarshalText()
+			if err != nil {
+				t.Errorf("marshal log level error, [%d] => %s", tc.lvl, err)
+				return
+			}
+			if string(marshalData) != tc.expect {
+				t.Errorf("marshal log level error, [%d] expect:%s, actual:%s", tc.lvl, tc.expect, string(marshalData))
 			}
 		})
 	}

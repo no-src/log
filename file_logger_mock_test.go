@@ -10,6 +10,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/no-src/log/level"
 )
 
 func TestFileLogger_WithNotExistFile(t *testing.T) {
@@ -17,7 +19,7 @@ func TestFileLogger_WithNotExistFile(t *testing.T) {
 	defer func() {
 		initOSMock()
 	}()
-	fileLogger, err := NewFileLogger(DebugLevel, "./logs", "ns")
+	fileLogger, err := NewFileLogger(level.DebugLevel, "./logs", "ns")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,7 +34,7 @@ func TestFileLogger_WithCreateLogDirError(t *testing.T) {
 	defer func() {
 		initOSMock()
 	}()
-	_, err := NewFileLogger(DebugLevel, "./logs", "ns")
+	_, err := NewFileLogger(level.DebugLevel, "./logs", "ns")
 	if err == nil {
 		t.Fatal("create file logger expect to get an error but get nil")
 	}
@@ -44,7 +46,7 @@ func TestFileLogger_WithCreateLogFileError(t *testing.T) {
 	defer func() {
 		initOSMock()
 	}()
-	_, err := NewFileLogger(DebugLevel, "./logs", "ns")
+	_, err := NewFileLogger(level.DebugLevel, "./logs", "ns")
 	if err == nil {
 		t.Fatal("create file logger expect to get an error but get nil")
 	}
@@ -56,7 +58,7 @@ func TestFileLogger_WithOpenLogFileError(t *testing.T) {
 	defer func() {
 		initOSMock()
 	}()
-	_, err := NewFileLogger(DebugLevel, "./logs", "ns")
+	_, err := NewFileLogger(level.DebugLevel, "./logs", "ns")
 	if err == nil {
 		t.Fatal("create file logger expect to get an error but get nil")
 	}
@@ -68,7 +70,7 @@ func TestFileLogger_WithAutoFlushWithWriteError(t *testing.T) {
 		initNewWriterMock()
 	}()
 	wait := time.Second * 1
-	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(DebugLevel, "./logs", "ns", true, wait)
+	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(level.DebugLevel, "./logs", "ns", true, wait)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -85,7 +87,7 @@ func TestFileLogger_WithAutoFlushWithWriteErrorAndNoAutoFlush(t *testing.T) {
 		initNewWriterMock()
 	}()
 	wait := time.Second * 1
-	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(DebugLevel, "./logs", "ns", false, wait)
+	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(level.DebugLevel, "./logs", "ns", false, wait)
 	if err != nil {
 		t.Fatal(err)
 	}

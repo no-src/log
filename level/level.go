@@ -1,4 +1,4 @@
-package log
+package level
 
 // Level the log level
 type Level int8
@@ -31,4 +31,9 @@ func (l Level) String() string {
 		return "NONE"
 	}
 	return "UNKNOWN"
+}
+
+// MarshalText implement interface encoding.TextMarshaler
+func (l Level) MarshalText() (text []byte, err error) {
+	return []byte(l.String()), nil
 }

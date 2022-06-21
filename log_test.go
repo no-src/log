@@ -3,6 +3,9 @@ package log
 import (
 	"errors"
 	"testing"
+
+	"github.com/no-src/log/formatter"
+	"github.com/no-src/log/level"
 )
 
 func TestLogs(t *testing.T) {
@@ -20,7 +23,7 @@ func TestLogs(t *testing.T) {
 }
 
 func TestConsoleLogger(t *testing.T) {
-	InitDefaultLogger(NewConsoleLogger(DebugLevel))
+	InitDefaultLogger(NewConsoleLogger(level.DebugLevel))
 	defer Close()
 	TestLogs(t)
 }
@@ -32,13 +35,19 @@ func TestEmptyLogger(t *testing.T) {
 }
 
 func TestMinLogLevel(t *testing.T) {
-	InitDefaultLogger(NewConsoleLogger(InfoLevel))
+	InitDefaultLogger(NewConsoleLogger(level.InfoLevel))
 	defer Close()
 	TestLogs(t)
 }
 
 func TestNilLogger(t *testing.T) {
 	InitDefaultLogger(nil)
+	defer Close()
+	TestLogs(t)
+}
+
+func TestInitDefaultFormatter(t *testing.T) {
+	InitDefaultFormatter(formatter.TextFormatter)
 	defer Close()
 	TestLogs(t)
 }

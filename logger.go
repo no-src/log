@@ -1,6 +1,10 @@
 package log
 
-import "io"
+import (
+	"io"
+
+	_ "github.com/no-src/log/formatter/text" // register text formatter
+)
 
 // Logger define a universal log interface
 type Logger interface {

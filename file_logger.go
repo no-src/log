@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/no-src/log/internal/cbool"
+	"github.com/no-src/log/level"
 )
 
 var (
@@ -46,12 +47,12 @@ type logMsg struct {
 }
 
 // NewFileLogger get a file logger
-func NewFileLogger(level Level, logDir string, filePrefix string) (Logger, error) {
-	return NewFileLoggerWithAutoFlush(level, logDir, filePrefix, false, time.Duration(0))
+func NewFileLogger(lvl level.Level, logDir string, filePrefix string) (Logger, error) {
+	return NewFileLoggerWithAutoFlush(lvl, logDir, filePrefix, false, time.Duration(0))
 }
 
 // NewFileLoggerWithAutoFlush get a file logger
-func NewFileLoggerWithAutoFlush(level Level, logDir string, filePrefix string, autoFlush bool, flushInterval time.Duration) (Logger, error) {
+func NewFileLoggerWithAutoFlush(lvl level.Level, logDir string, filePrefix string, autoFlush bool, flushInterval time.Duration) (Logger, error) {
 	logger := &fileLogger{
 		logDir:        logDir,
 		in:            make(chan logMsg, 100),
@@ -63,18 +64,10 @@ func NewFileLoggerWithAutoFlush(level Level, logDir string, filePrefix string, a
 		closed:        cbool.New(false),
 	}
 	// init baseLogger
-	logger.baseLogger.init(logger, level)
+	logger.baseLogger.init(logger, lvl, true)
 	// init fileLogger
 	err := logger.init()
 	return logger, err
-}
-
-// Log write a format log to file
-func (l *fileLogger) Log(format string, args ...interface{}) {
-	format = fmt.Sprintf("[%s] ", time.Now().Format("2006-01-02 15:04:05")) + format
-	format = fmt.Sprintf(format, args...)
-	format = l.builder.AppendRowTerminator(format)
-	l.Write([]byte(format))
 }
 
 func (l *fileLogger) Close() error {

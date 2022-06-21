@@ -3,16 +3,18 @@ package log
 import (
 	"errors"
 	"testing"
+
+	"github.com/no-src/log/level"
 )
 
 func TestMultiLogger(t *testing.T) {
-	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(DebugLevel)))
+	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel)))
 	defer Close()
 	TestLogs(t)
 }
 
 func TestMultiLogger_WithError(t *testing.T) {
-	InitDefaultLogger(NewMultiLogger(newErrorLogger(DebugLevel)))
+	InitDefaultLogger(NewMultiLogger(newErrorLogger(level.DebugLevel)))
 	defer Close()
 	TestLogs(t)
 }
@@ -21,7 +23,7 @@ type errorLogger struct {
 	emptyLogger
 }
 
-func newErrorLogger(level Level) Logger {
+func newErrorLogger(lvl level.Level) Logger {
 	logger := &errorLogger{}
 	return logger
 }
