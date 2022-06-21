@@ -46,8 +46,14 @@ func TestNilLogger(t *testing.T) {
 	TestLogs(t)
 }
 
-func TestInitDefaultFormatter(t *testing.T) {
+func TestInitDefaultFormatter_TextFormatter(t *testing.T) {
 	InitDefaultFormatter(formatter.TextFormatter)
+	defer Close()
+	TestLogs(t)
+}
+
+func TestInitDefaultFormatter_JsonFormatter(t *testing.T) {
+	InitDefaultFormatter(formatter.JsonFormatter)
 	defer Close()
 	TestLogs(t)
 }

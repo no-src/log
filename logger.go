@@ -3,6 +3,7 @@ package log
 import (
 	"io"
 
+	_ "github.com/no-src/log/formatter/json" // register json formatter
 	_ "github.com/no-src/log/formatter/text" // register text formatter
 )
 
