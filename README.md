@@ -33,11 +33,12 @@ import (
 	"errors"
 
 	"github.com/no-src/log"
+	"github.com/no-src/log/level"
 )
 
 func main() {
 	// init default logger
-	if logger, err := log.NewFileLogger(log.DebugLevel, "./logs", ""); err == nil {
+	if logger, err := log.NewFileLogger(level.DebugLevel, "./logs", ""); err == nil {
 		log.InitDefaultLoggerWithSample(logger, 0.6)
 	} else {
 		log.Error(err, "init file logger error")
