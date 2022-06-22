@@ -23,15 +23,37 @@ func TestLogs(t *testing.T) {
 }
 
 func TestConsoleLogger(t *testing.T) {
-	InitDefaultLogger(NewConsoleLogger(level.DebugLevel))
-	defer Close()
-	TestLogs(t)
+	testCases := []struct {
+		name      string
+		formatter formatter.Type
+	}{
+		{"TextFormatter", formatter.TextFormatter},
+		{"JsonFormatter", formatter.JsonFormatter},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			InitDefaultLogger(NewConsoleLogger(level.DebugLevel).WithFormatter(formatter.New(tc.formatter)))
+			defer Close()
+			TestLogs(t)
+		})
+	}
 }
 
 func TestEmptyLogger(t *testing.T) {
-	InitDefaultLogger(NewEmptyLogger())
-	defer Close()
-	TestLogs(t)
+	testCases := []struct {
+		name      string
+		formatter formatter.Type
+	}{
+		{"TextFormatter", formatter.TextFormatter},
+		{"JsonFormatter", formatter.JsonFormatter},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			InitDefaultLogger(NewEmptyLogger().WithFormatter(formatter.New(tc.formatter)))
+			defer Close()
+			TestLogs(t)
+		})
+	}
 }
 
 func TestMinLogLevel(t *testing.T) {
@@ -42,18 +64,6 @@ func TestMinLogLevel(t *testing.T) {
 
 func TestNilLogger(t *testing.T) {
 	InitDefaultLogger(nil)
-	defer Close()
-	TestLogs(t)
-}
-
-func TestInitDefaultFormatter_TextFormatter(t *testing.T) {
-	InitDefaultFormatter(formatter.TextFormatter)
-	defer Close()
-	TestLogs(t)
-}
-
-func TestInitDefaultFormatter_JsonFormatter(t *testing.T) {
-	InitDefaultFormatter(formatter.JsonFormatter)
 	defer Close()
 	TestLogs(t)
 }

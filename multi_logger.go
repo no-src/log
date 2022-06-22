@@ -1,5 +1,9 @@
 package log
 
+import (
+	"github.com/no-src/log/formatter"
+)
+
 type multiLogger struct {
 	loggers []Logger
 }
@@ -66,4 +70,8 @@ func (l *multiLogger) Write(p []byte) (n int, err error) {
 		}
 	}
 	return n, err
+}
+
+func (l *multiLogger) WithFormatter(f formatter.Formatter) Logger {
+	return l
 }

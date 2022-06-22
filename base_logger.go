@@ -63,3 +63,10 @@ func (l *baseLogger) init(w Writer, lvl level.Level, appendTime bool) {
 func checkLogLevel(lvl level.Level, currentLevel level.Level) bool {
 	return currentLevel >= lvl
 }
+
+func (l *baseLogger) WithFormatter(f formatter.Formatter) Logger {
+	if f != nil {
+		l.f = f
+	}
+	return l
+}

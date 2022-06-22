@@ -3,6 +3,7 @@ package log
 import (
 	"io"
 
+	"github.com/no-src/log/formatter"
 	_ "github.com/no-src/log/formatter/json" // register json formatter
 	_ "github.com/no-src/log/formatter/text" // register text formatter
 )
@@ -10,6 +11,7 @@ import (
 // Logger define a universal log interface
 type Logger interface {
 	Writer
+	Option
 
 	Debug(format string, args ...interface{})
 	Info(format string, args ...interface{})
@@ -25,4 +27,10 @@ type Writer interface {
 	Log(format string, args ...interface{})
 	// Close to close log and release dependencies
 	Close() error
+}
+
+// Option the log options interface
+type Option interface {
+	// WithFormatter set the log formatter and return logger self
+	WithFormatter(f formatter.Formatter) Logger
 }

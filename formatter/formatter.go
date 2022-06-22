@@ -23,6 +23,16 @@ func Default() Formatter {
 	return New(defaultFormatterType)
 }
 
+// NewJsonFormatter return a json formatter
+func NewJsonFormatter() Formatter {
+	return New(JsonFormatter)
+}
+
+// NewTextFormatter return a text formatter
+func NewTextFormatter() Formatter {
+	return New(TextFormatter)
+}
+
 // InitDefaultFormatter init the global default Formatter by specified type
 func InitDefaultFormatter(t Type) {
 	_, ok := formatters[t]
@@ -31,7 +41,8 @@ func InitDefaultFormatter(t Type) {
 	}
 }
 
-// New return a Formatter by specified type
+// New return a Formatter by specified type.
+// if the specified Formatter does not exist and return the default Formatter.
 func New(t Type) Formatter {
 	f := formatters[t]
 	if f == nil {

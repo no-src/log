@@ -1,6 +1,9 @@
 package log
 
-import "github.com/no-src/log/sample"
+import (
+	"github.com/no-src/log/formatter"
+	"github.com/no-src/log/sample"
+)
 
 type sampleLogger struct {
 	sampleFunc sample.SampleFunc
@@ -61,4 +64,8 @@ func (l *sampleLogger) Write(p []byte) (n int, err error) {
 
 func (l *sampleLogger) sample() bool {
 	return l.sampleFunc(l.rate)
+}
+
+func (l *sampleLogger) WithFormatter(f formatter.Formatter) Logger {
+	return l
 }

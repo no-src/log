@@ -1,5 +1,9 @@
 package log
 
+import (
+	"github.com/no-src/log/formatter"
+)
+
 type emptyLogger struct {
 }
 
@@ -35,4 +39,8 @@ func (l *emptyLogger) Close() error {
 
 func (l *emptyLogger) Write(p []byte) (n int, err error) {
 	return len(p), nil
+}
+
+func (l *emptyLogger) WithFormatter(f formatter.Formatter) Logger {
+	return l
 }

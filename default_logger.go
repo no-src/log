@@ -1,7 +1,6 @@
 package log
 
 import (
-	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/level"
 )
 
@@ -97,12 +96,6 @@ func Close() error {
 // DefaultLogger return the global default logger
 func DefaultLogger() Logger {
 	return defaultLogger
-}
-
-// InitDefaultFormatter init the global default Formatter by specified type and reset the default logger
-func InitDefaultFormatter(t formatter.Type) {
-	formatter.InitDefaultFormatter(t)
-	initDefaultLogger()
 }
 
 func initDefaultLogger() {
