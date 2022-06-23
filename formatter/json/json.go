@@ -1,6 +1,7 @@
 package json
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -20,12 +21,14 @@ func (f *jsonFormatter) Serialize(c content.Content) ([]byte, error) {
 	if c.Error != nil {
 		c.Log = fmt.Sprintf(c.Log+". %s", c.Error)
 	}
-	data, err := json.Marshal(c)
-	if err != nil {
+	buf := new(bytes.Buffer)
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(false)
+	// Encode will auto append row terminator
+	if err := encoder.Encode(c); err != nil {
 		return nil, err
 	}
-	data = append(data, []byte(formatter.AppendRowTerminator(""))...)
-	return data, err
+	return buf.Bytes(), nil
 }
 
 func init() {
