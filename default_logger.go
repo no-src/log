@@ -98,10 +98,6 @@ func DefaultLogger() Logger {
 	return defaultLogger
 }
 
-func initDefaultLogger() {
-	InitDefaultLogger(NewConsoleLogger(level.InfoLevel))
-}
-
 func init() {
-	initDefaultLogger()
+	InitDefaultLogger(NewConsoleLogger(level.InfoLevel))
 }
