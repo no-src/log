@@ -17,7 +17,7 @@ type Content struct {
 }
 
 // NewContent return an instance of Content
-func NewContent(lvl level.Level, log string, args []interface{}, err error, appendTime bool) Content {
+func NewContent(lvl level.Level, err error, appendTime bool, log string, args ...interface{}) Content {
 	c := Content{
 		Level:      lvl,
 		Time:       Time(time.Now()),

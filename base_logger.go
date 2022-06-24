@@ -44,7 +44,7 @@ func (l *baseLogger) log(lvl level.Level, format string, args ...interface{}) {
 
 func (l *baseLogger) logWithErr(err error, lvl level.Level, format string, args ...interface{}) {
 	if checkLogLevel(l.lvl, lvl) {
-		data, _ := l.f.Serialize(content.NewContent(lvl, format, args, err, l.appendTime))
+		data, _ := l.f.Serialize(content.NewContent(lvl, err, l.appendTime, format, args...))
 		l.Log(string(data))
 	}
 }
