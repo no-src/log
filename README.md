@@ -46,18 +46,18 @@ func main() {
 	defer log.Close()
 
 	// use default logger
-	log.Debug("%s, test debug log", "hello")
-	log.Info("%s, test info log", "hello")
-	log.Warn("%s, test warn log", "hello")
-	log.Error(errors.New("log err"), "%s, test error log", "hello")
-	log.ErrorIf(errors.New("log err"), "%s, test error log", "hello")
-	log.Log("%s, test log log", "hello")
+	log.Debug("%s %s, test debug log", "hello", "world")
+	log.Info("%s %s, test info log", "hello", "world")
+	log.Warn("%s %s, test warn log", "hello", "world")
+	log.Error(errors.New("log err"), "%s %s, test error log", "hello", "world")
+	log.ErrorIf(errors.New("log err"), "%s %s, test error log", "hello", "world")
+	log.Log("%s %s, test log log", "hello", "world")
 
 	// use default logger by random sampling
-	log.DebugSample("[sample] %s, test debug log", "hello")
-	log.InfoSample("[sample] %s, test info log", "hello")
-	log.WarnSample("[sample] %s, test warn log", "hello")
-	log.ErrorSample(errors.New("log err"), "[sample] %s,test error log", "hello")
-	log.ErrorIfSample(errors.New("log err from ErrorIfSample"), "[sample] %s, test error log", "hello")
+	log.DebugSample("[sample] %s %s, test debug log", "hello", "world")
+	log.InfoSample("[sample] %s %s, test info log", "hello", "world")
+	log.WarnSample("[sample] %s %s, test warn log", "hello", "world")
+	log.ErrorSample(errors.New("log err"), "[sample] %s %s,test error log", "hello", "world")
+	log.ErrorIfSample(errors.New("log err from ErrorIfSample"), "[sample] %s %s, test error log", "hello", "world")
 }
 ```

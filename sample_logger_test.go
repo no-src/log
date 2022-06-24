@@ -31,10 +31,10 @@ func TestSampleLogger(t *testing.T) {
 }
 
 func testSampleLogs() {
-	DebugSample("[sample] %s, test debug log", "hello")
-	InfoSample("[sample] %s, test info log", "hello")
-	WarnSample("[sample] %s, test warn log", "hello")
-	ErrorSample(errors.New("log err"), "[sample] %s,test error log", "hello")
-	ErrorIfSample(errors.New("log err from ErrorIfSample"), "[sample] %s, test error log", "hello")
-	ErrorIfSample(nil, "[sample] %s, this error log will not be printed", "hello")
+	DebugSample("[sample] %s %s, test debug log", "hello", "world")
+	InfoSample("[sample] %s %s, test info log", "hello", "world")
+	WarnSample("[sample] %s %s, test warn log", "hello", "world")
+	ErrorSample(errors.New("log err"), "[sample] %s %s,test error log", "hello", "world")
+	ErrorIfSample(errors.New("log err from ErrorIfSample"), "[sample] %s %s, test error log", "hello", "world")
+	ErrorIfSample(nil, "[sample] %s %s, this error log will not be printed", "hello", "world")
 }
