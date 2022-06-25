@@ -9,7 +9,7 @@ import (
 // Content the log content info
 type Content struct {
 	Level      level.Level   `json:"level"`
-	Time       Time          `json:"time"`
+	Time       *Time         `json:"time,omitempty"`
 	Log        string        `json:"log"`
 	Error      error         `json:"-"`
 	AppendTime bool          `json:"-"`
@@ -20,10 +20,12 @@ type Content struct {
 func NewContent(lvl level.Level, err error, appendTime bool, log string, args ...interface{}) Content {
 	c := Content{
 		Level:      lvl,
-		Time:       Time(time.Now()),
 		Log:        log,
 		Args:       args,
 		AppendTime: appendTime,
+	}
+	if appendTime {
+		c.Time = NewTime(time.Now())
 	}
 	if err != nil {
 		c.Error = Error{

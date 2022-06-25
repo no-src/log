@@ -2,8 +2,6 @@ package text
 
 import (
 	"fmt"
-	"time"
-
 	"github.com/no-src/log/content"
 	"github.com/no-src/log/formatter"
 )
@@ -18,8 +16,8 @@ func newTextFormatter() formatter.Formatter {
 func (f *textFormatter) Serialize(c content.Content) ([]byte, error) {
 	var format = "%s[%s] %s" // [time] [level] content<. error>
 	var timeSection string
-	if c.AppendTime {
-		timeSection = fmt.Sprintf("[%s] ", time.Time(c.Time).Format(content.LogTimeFormat))
+	if c.AppendTime && c.Time != nil {
+		timeSection = fmt.Sprintf("[%s] ", c.Time.Time().Format(content.LogTimeFormat))
 	}
 	content := fmt.Sprintf(c.Log, c.Args...)
 	format = fmt.Sprintf(format, timeSection, c.Level.String(), content)
