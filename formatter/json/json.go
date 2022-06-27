@@ -25,10 +25,8 @@ func (f *jsonFormatter) Serialize(c content.Content) ([]byte, error) {
 	encoder := json.NewEncoder(buf)
 	encoder.SetEscapeHTML(false)
 	// Encode will auto append row terminator
-	if err := encoder.Encode(c); err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
+	err := encoder.Encode(c)
+	return buf.Bytes(), err
 }
 
 func init() {
