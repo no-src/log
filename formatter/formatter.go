@@ -13,7 +13,7 @@ type Formatter interface {
 }
 
 var (
-	formatters           = make(map[Type]Formatter)
+	formatters           = make(map[string]Formatter)
 	defaultFormatterType = TextFormatter
 	defaultTerminator    = "\n"
 )
@@ -34,7 +34,7 @@ func NewTextFormatter() Formatter {
 }
 
 // InitDefaultFormatter init the global default Formatter by specified type
-func InitDefaultFormatter(t Type) {
+func InitDefaultFormatter(t string) {
 	_, ok := formatters[t]
 	if ok {
 		defaultFormatterType = t
@@ -43,7 +43,7 @@ func InitDefaultFormatter(t Type) {
 
 // New return a Formatter by specified type.
 // if the specified Formatter does not exist and return the default Formatter.
-func New(t Type) Formatter {
+func New(t string) Formatter {
 	f := formatters[t]
 	if f == nil {
 		return Default()
@@ -52,7 +52,7 @@ func New(t Type) Formatter {
 }
 
 // Register register a Formatter
-func Register(t Type, formatter Formatter) {
+func Register(t string, formatter Formatter) {
 	formatters[t] = formatter
 }
 

@@ -12,7 +12,7 @@ func TestSampleLogger(t *testing.T) {
 	testCases := []struct {
 		name       string
 		sampleRate float64
-		formatter  formatter.Type
+		formatter  string
 	}{
 		{"sample rate less than zero", -1, formatter.TextFormatter},
 		{"sample rate equals zero", 0, formatter.TextFormatter},

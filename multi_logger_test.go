@@ -11,7 +11,7 @@ import (
 func TestMultiLogger(t *testing.T) {
 	testCases := []struct {
 		name      string
-		formatter formatter.Type
+		formatter string
 	}{
 		{"TextFormatter", formatter.TextFormatter},
 		{"JsonFormatter", formatter.JsonFormatter},
@@ -28,7 +28,7 @@ func TestMultiLogger(t *testing.T) {
 func TestMultiLogger_WithFormatter(t *testing.T) {
 	testCases := []struct {
 		name      string
-		formatter formatter.Type
+		formatter string
 	}{
 		{"TextFormatter", formatter.TextFormatter},
 		{"JsonFormatter", formatter.JsonFormatter},

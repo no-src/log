@@ -1,13 +1,8 @@
 package formatter
 
-// Type the log formatter type
-type Type int
-
 const (
-	// UnknownFormatter the unknown formatter type
-	UnknownFormatter Type = iota
 	// TextFormatter the text formatter type
-	TextFormatter
+	TextFormatter string = "text"
 	// JsonFormatter the json formatter type
-	JsonFormatter
+	JsonFormatter string = "json"
 )

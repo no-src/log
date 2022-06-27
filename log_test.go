@@ -25,7 +25,7 @@ func TestLogs(t *testing.T) {
 func TestConsoleLogger(t *testing.T) {
 	testCases := []struct {
 		name      string
-		formatter formatter.Type
+		formatter string
 	}{
 		{"TextFormatter", formatter.TextFormatter},
 		{"JsonFormatter", formatter.JsonFormatter},
@@ -42,7 +42,7 @@ func TestConsoleLogger(t *testing.T) {
 func TestEmptyLogger(t *testing.T) {
 	testCases := []struct {
 		name      string
-		formatter formatter.Type
+		formatter string
 	}{
 		{"TextFormatter", formatter.TextFormatter},
 		{"JsonFormatter", formatter.JsonFormatter},
