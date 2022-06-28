@@ -2,6 +2,7 @@ package text
 
 import (
 	"fmt"
+
 	"github.com/no-src/log/content"
 	"github.com/no-src/log/formatter"
 )
