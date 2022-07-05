@@ -3,9 +3,12 @@ package benchmark
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/no-src/log"
 )
+
+var currentYear = time.Now().Year()
 
 func benchmarkLogger_Debug(b *testing.B, initLogger func()) {
 	initLogger()
@@ -13,7 +16,7 @@ func benchmarkLogger_Debug(b *testing.B, initLogger func()) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		log.Debug("%s %s, test debug log", "hello", "world")
+		log.Debug("%s %s %s %s %s %s %s %s %s %d, test debug log", "Hello,", "this", "is", "a", "logger", "component", "based", "on", "golang", currentYear)
 	}
 
 }
@@ -24,7 +27,7 @@ func benchmarkLogger_Info(b *testing.B, initLogger func()) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		log.Info("%s %s, test info log", "hello", "world")
+		log.Info("%s %s %s %s %s %s %s %s %s %d, test info log", "Hello,", "this", "is", "a", "logger", "component", "based", "on", "golang", currentYear)
 	}
 }
 
@@ -34,7 +37,7 @@ func benchmarkLogger_Warn(b *testing.B, initLogger func()) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		log.Warn("%s %s, test warn log", "hello", "world")
+		log.Warn("%s %s %s %s %s %s %s %s %s %d, test warn log", "Hello,", "this", "is", "a", "logger", "component", "based", "on", "golang", currentYear)
 	}
 }
 
@@ -44,7 +47,7 @@ func benchmarkLogger_Error(b *testing.B, initLogger func()) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		log.Error(errors.New("log err"), "%s %s,test error log", "hello", "world")
+		log.Error(errors.New("log err"), "%s %s %s %s %s %s %s %s %s %d,test error log", "Hello,", "this", "is", "a", "logger", "component", "based", "on", "golang", currentYear)
 	}
 }
 
@@ -54,7 +57,7 @@ func benchmarkLogger_ErrorIf(b *testing.B, initLogger func()) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		log.ErrorIf(errors.New("log err from ErrorIf"), "%s %s, test error log", "hello", "world")
+		log.ErrorIf(errors.New("log err from ErrorIf"), "%s %s %s %s %s %s %s %s %s %d, test error log", "Hello,", "this", "is", "a", "logger", "component", "based", "on", "golang", currentYear)
 	}
 }
 
@@ -64,7 +67,7 @@ func benchmarkLogger_ErrorIf_NilError(b *testing.B, initLogger func()) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		log.ErrorIf(nil, "%s %s, this error log will not be printed", "hello", "world")
+		log.ErrorIf(nil, "%s %s %s %s %s %s %s %s %s %d, this error log will not be printed", "Hello,", "this", "is", "a", "logger", "component", "based", "on", "golang", currentYear)
 	}
 }
 
@@ -74,7 +77,7 @@ func benchmarkLogger_Log(b *testing.B, initLogger func()) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		log.Log("%s %s, test log log", "hello", "world")
+		log.Log("%s %s %s %s %s %s %s %s %s %d, test log log", "Hello,", "this", "is", "a", "logger", "component", "based", "on", "golang", currentYear)
 	}
 }
 
@@ -84,6 +87,6 @@ func benchmarkLogger_Write(b *testing.B, initLogger func()) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		log.DefaultLogger().Write([]byte("hello logger"))
+		log.DefaultLogger().Write([]byte("Hello, this is a logger component based on golang\n"))
 	}
 }
