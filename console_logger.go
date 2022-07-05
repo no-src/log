@@ -1,6 +1,7 @@
 package log
 
 import (
+	"bufio"
 	"os"
 
 	"github.com/no-src/log/level"
@@ -8,16 +9,23 @@ import (
 
 type consoleLogger struct {
 	baseLogger
+	w *bufio.Writer
 }
 
 // NewConsoleLogger get a console logger
 func NewConsoleLogger(lvl level.Level) Logger {
-	logger := &consoleLogger{}
+	logger := &consoleLogger{
+		w: bufio.NewWriter(os.Stdout),
+	}
 	// init baseLogger
 	logger.baseLogger.init(logger, lvl, true)
 	return logger
 }
 
 func (l *consoleLogger) Write(p []byte) (n int, err error) {
-	return os.Stdout.Write(p)
+	return l.w.Write(p)
+}
+
+func (l *consoleLogger) Close() error {
+	return l.w.Flush()
 }
