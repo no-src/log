@@ -2,7 +2,6 @@ package log
 
 import (
 	"fmt"
-
 	"github.com/no-src/log/content"
 	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/level"
@@ -35,7 +34,10 @@ func (l *baseLogger) Error(err error, format string, args ...interface{}) {
 
 // Log write a format log
 func (l *baseLogger) Log(format string, args ...interface{}) {
-	format = fmt.Sprintf(formatter.AppendRowTerminator(format), args...)
+	format = formatter.AppendRowTerminator(format)
+	if len(args) > 0 {
+		format = fmt.Sprintf(format, args...)
+	}
 	l.Write([]byte(format))
 }
 
