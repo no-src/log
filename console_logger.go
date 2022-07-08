@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"os"
 
+	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/level"
 )
 
@@ -28,4 +29,11 @@ func (l *consoleLogger) Write(p []byte) (n int, err error) {
 
 func (l *consoleLogger) Close() error {
 	return l.w.Flush()
+}
+
+func (l *consoleLogger) WithFormatter(f formatter.Formatter) Logger {
+	if f != nil {
+		l.f = f
+	}
+	return l
 }

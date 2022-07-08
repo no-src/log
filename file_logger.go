@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/internal/cbool"
 	"github.com/no-src/log/level"
 )
@@ -201,4 +202,11 @@ func (l *fileLogger) Write(p []byte) (n int, err error) {
 		return pLen, nil
 	}
 	return 0, errors.New("file logger is uninitialized or closed")
+}
+
+func (l *fileLogger) WithFormatter(f formatter.Formatter) Logger {
+	if f != nil {
+		l.f = f
+	}
+	return l
 }
