@@ -25,7 +25,7 @@ func TestFileLogger_WithNotExistFile(t *testing.T) {
 	}
 	InitDefaultLogger(fileLogger)
 	defer Close()
-	TestLogs(t)
+	testLogs(t)
 }
 
 func TestFileLogger_WithCreateLogDirError(t *testing.T) {
@@ -75,7 +75,7 @@ func TestFileLogger_WithAutoFlushWithWriteError(t *testing.T) {
 		t.Fatal(err)
 	}
 	InitDefaultLogger(autoFlushFileLogger)
-	TestLogs(t)
+	testLogs(t)
 	// more than the defaultBufSize 4096
 	Debug(strings.Repeat("hello golang, hello gopher", 500))
 	<-time.After(wait + time.Second)
@@ -92,7 +92,7 @@ func TestFileLogger_WithAutoFlushWithWriteErrorAndNoAutoFlush(t *testing.T) {
 		t.Fatal(err)
 	}
 	InitDefaultLogger(autoFlushFileLogger)
-	TestLogs(t)
+	testLogs(t)
 	<-time.After(wait + time.Second)
 }
 

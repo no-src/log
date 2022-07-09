@@ -20,7 +20,7 @@ func TestMultiLogger(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel).WithFormatter(formatter.New(tc.formatter))))
 			defer Close()
-			TestLogs(t)
+			testLogs(t)
 		})
 	}
 }
@@ -38,7 +38,7 @@ func TestMultiLogger_WithFormatter(t *testing.T) {
 			// the WithFormatter is ineffective in the multiLogger
 			InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel)).WithFormatter(formatter.New(tc.formatter)))
 			defer Close()
-			TestLogs(t)
+			testLogs(t)
 		})
 	}
 }
@@ -46,7 +46,7 @@ func TestMultiLogger_WithFormatter(t *testing.T) {
 func TestMultiLogger_WithError(t *testing.T) {
 	InitDefaultLogger(NewMultiLogger(newErrorLogger(level.DebugLevel)))
 	defer Close()
-	TestLogs(t)
+	testLogs(t)
 }
 
 type errorLogger struct {
