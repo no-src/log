@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+
 	"github.com/no-src/log/content"
 	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/level"
@@ -52,6 +53,10 @@ func (l *baseLogger) logWithErr(err error, lvl level.Level, format string, args 
 	}
 }
 
+// Close the default implementation of Writer.Close.
+// Nothing is going to be done here, provide this default implementation to avoid infinite loop call and stack overflow if the real struct does not implement the Writer.Close.
+// As mentioned above, a panic will happen => runtime: goroutine stack exceeds 1000000000-byte limit.
+// So, keep it here.
 func (l *baseLogger) Close() error {
 	return nil
 }
