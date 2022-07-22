@@ -4,17 +4,30 @@ import (
 	"testing"
 	"time"
 
+	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/level"
 )
 
 func TestFileLogger(t *testing.T) {
-	fileLogger, err := NewFileLogger(level.DebugLevel, "./logs", "ns")
-	if err != nil {
-		t.Fatal(err)
+	testCases := []struct {
+		name      string
+		formatter string
+	}{
+		{"TextFormatter", formatter.TextFormatter},
+		{"JsonFormatter", formatter.JsonFormatter},
 	}
-	InitDefaultLogger(fileLogger)
-	defer Close()
-	testLogs(t)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			fileLogger, err := NewFileLogger(level.DebugLevel, "./logs", "ns_"+tc.formatter)
+			if err != nil {
+				t.Fatal(err)
+			}
+			InitDefaultLogger(fileLogger.WithFormatter(formatter.New(tc.formatter)))
+			defer Close()
+			testLogs(t)
+		})
+	}
+
 }
 
 func TestFileLogger_WithAutoFlush(t *testing.T) {

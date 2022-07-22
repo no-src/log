@@ -72,3 +72,28 @@ func TestNilLogger(t *testing.T) {
 	defer Close()
 	testLogs(t)
 }
+
+func TestBaseLogger_Close(t *testing.T) {
+	InitDefaultLogger(newMinLogger())
+	// call baseLogger.Close
+	defer Close()
+	testLogs(t)
+}
+
+type minLogger struct {
+	baseLogger
+}
+
+func newMinLogger() Logger {
+	logger := &minLogger{}
+	logger.init(logger, level.DebugLevel, true)
+	return logger
+}
+
+func (l *minLogger) Write(p []byte) (n int, err error) {
+	return len(p), nil
+}
+
+func (l *minLogger) WithFormatter(f formatter.Formatter) Logger {
+	return l
+}
