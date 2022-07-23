@@ -35,7 +35,7 @@ type fileLogger struct {
 	initialized   bool
 	filePrefix    string
 	closed        *cbool.CBool
-	close         chan bool // the log is closed, and wait to write all the logs
+	close         chan struct{} // the log is closed, and wait to write all the logs
 	autoFlush     bool
 	flushInterval time.Duration
 	mu            sync.Mutex // avoid data race for writer
@@ -57,7 +57,7 @@ func NewFileLoggerWithAutoFlush(lvl level.Level, logDir string, filePrefix strin
 	logger := &fileLogger{
 		logDir:        logDir,
 		in:            make(chan logMsg, 100),
-		close:         make(chan bool, 1),
+		close:         make(chan struct{}, 1),
 		filePrefix:    filePrefix,
 		autoFlush:     autoFlush,
 		flushInterval: flushInterval,
@@ -135,7 +135,7 @@ func (l *fileLogger) write() {
 		if l.initialized && l.writer != nil {
 			l.writer.Flush()
 		}
-		l.close <- true
+		l.close <- struct{}{}
 	} else if msg.flush && l.initialized && l.writer != nil && l.writer.Buffered() > 0 {
 		// received a flush message, flush logs to file
 		if err := l.writer.Flush(); err != nil {
