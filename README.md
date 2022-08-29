@@ -98,7 +98,7 @@ if logger, err := log.NewFileLogger(level.DebugLevel, "./logs", "multi_"); err =
 
 ### Sample Logger
 
-Init sample logger as default logger.
+Init console logger as default logger and set the sample rate, default is `1`.
 
 ```go
 log.InitDefaultLoggerWithSample(log.NewConsoleLogger(level.DebugLevel), 0.6)
