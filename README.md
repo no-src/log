@@ -18,13 +18,13 @@ go get -u github.com/no-src/log
 
 Current support following loggers
 
-- empty logger
-- console logger
-- file logger
-- multi logger
-- sample logger
+- [empty logger](#empty-logger)
+- [console logger](#console-logger)
+- [file logger](#file-logger)
+- [multi logger](#multi-logger)
+- [sample logger](#sample-logger)
 
-For example, init a file logger, to write logs.
+For example, init a console logger, to write logs.
 
 ```go
 package main
@@ -37,27 +37,80 @@ import (
 )
 
 func main() {
-	// init default logger
-	if logger, err := log.NewFileLogger(level.DebugLevel, "./logs", ""); err == nil {
-		log.InitDefaultLoggerWithSample(logger, 0.6)
-	} else {
-		log.Error(err, "init file logger error")
-	}
+	// init console logger as default logger
+	// replace the line of code with any logger you need
+	log.InitDefaultLogger(log.NewConsoleLogger(level.DebugLevel))
+
 	defer log.Close()
 
-	// use default logger
-	log.Debug("%s %s, test debug log", "hello", "world")
-	log.Info("%s %s, test info log", "hello", "world")
-	log.Warn("%s %s, test warn log", "hello", "world")
-	log.Error(errors.New("log err"), "%s %s, test error log", "hello", "world")
-	log.ErrorIf(errors.New("log err"), "%s %s, test error log", "hello", "world")
-	log.Log("%s %s, test log log", "hello", "world")
-
-	// use default logger by random sampling
-	log.DebugSample("[sample] %s %s, test debug log", "hello", "world")
-	log.InfoSample("[sample] %s %s, test info log", "hello", "world")
-	log.WarnSample("[sample] %s %s, test warn log", "hello", "world")
-	log.ErrorSample(errors.New("log err"), "[sample] %s %s,test error log", "hello", "world")
-	log.ErrorIfSample(errors.New("log err from ErrorIfSample"), "[sample] %s %s, test error log", "hello", "world")
+	text := "hello world"
+	// use default logger to write logs
+	log.Debug("%s, test debug log", text)
+	log.Info("%s, test info log", text)
+	log.Warn("%s, test warn log", text)
+	log.Error(errors.New("log err"), "%s, test error log", text)
+	log.ErrorIf(errors.New("log err"), "%s, test error log", text)
+	log.Log("%s, test log log", text)
 }
+```
+
+## Logger
+
+### empty logger
+
+init empty logger as default logger.
+
+```go
+log.InitDefaultLogger(log.NewEmptyLogger())
+```
+
+### console logger
+
+init console logger as default logger.
+
+```go
+log.InitDefaultLogger(log.NewConsoleLogger(level.DebugLevel))
+```
+
+### file logger
+
+init file logger as default logger.
+
+```go
+if logger, err := log.NewFileLogger(level.DebugLevel, "./logs", "default_"); err == nil {
+    log.InitDefaultLogger(logger)
+} else {
+    log.Error(err, "init file logger error")
+}
+```
+
+### multi logger
+
+init multi logger as default logger.
+
+```go
+if logger, err := log.NewFileLogger(level.DebugLevel, "./logs", "multi_"); err == nil {
+    log.InitDefaultLogger(log.NewMultiLogger(log.NewConsoleLogger(level.DebugLevel), logger))
+} else {
+    log.Error(err, "init file logger error")
+}
+```
+
+### sample logger
+
+init sample logger as default logger.
+
+```go
+log.InitDefaultLoggerWithSample(log.NewConsoleLogger(level.DebugLevel), 0.6)
+```
+
+use default logger to write logs by random sampling.
+
+```go
+text := "hello world"
+log.DebugSample("[sample] %s, test debug log", text)
+log.InfoSample("[sample] %s, test info log", text)
+log.WarnSample("[sample] %s, test warn log", text)
+log.ErrorSample(errors.New("log err"), "[sample] %s,test error log", text)
+log.ErrorIfSample(errors.New("log err from ErrorIfSample"), "[sample] %s, test error log", text)
 ```
