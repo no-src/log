@@ -18,11 +18,11 @@ go get -u github.com/no-src/log
 
 Current support following loggers
 
-- [empty logger](#empty-logger)
-- [console logger](#console-logger)
-- [file logger](#file-logger)
-- [multi logger](#multi-logger)
-- [sample logger](#sample-logger)
+- [Empty Logger](#empty-logger)
+- [Console Logger](#console-logger)
+- [File Logger](#file-logger)
+- [Multi Logger](#multi-logger)
+- [Sample Logger](#sample-logger)
 
 For example, init a console logger, to write logs.
 
@@ -56,25 +56,25 @@ func main() {
 
 ## Logger
 
-### empty logger
+### Empty Logger
 
-init empty logger as default logger.
+Init empty logger as default logger.
 
 ```go
 log.InitDefaultLogger(log.NewEmptyLogger())
 ```
 
-### console logger
+### Console Logger
 
-init console logger as default logger.
+Init console logger as default logger.
 
 ```go
 log.InitDefaultLogger(log.NewConsoleLogger(level.DebugLevel))
 ```
 
-### file logger
+### File Logger
 
-init file logger as default logger.
+Init file logger as default logger.
 
 ```go
 if logger, err := log.NewFileLogger(level.DebugLevel, "./logs", "default_"); err == nil {
@@ -84,9 +84,9 @@ if logger, err := log.NewFileLogger(level.DebugLevel, "./logs", "default_"); err
 }
 ```
 
-### multi logger
+### Multi Logger
 
-init multi logger as default logger.
+Init multi logger as default logger.
 
 ```go
 if logger, err := log.NewFileLogger(level.DebugLevel, "./logs", "multi_"); err == nil {
@@ -96,21 +96,21 @@ if logger, err := log.NewFileLogger(level.DebugLevel, "./logs", "multi_"); err =
 }
 ```
 
-### sample logger
+### Sample Logger
 
-init sample logger as default logger.
+Init sample logger as default logger.
 
 ```go
 log.InitDefaultLoggerWithSample(log.NewConsoleLogger(level.DebugLevel), 0.6)
 ```
 
-use default logger to write logs by random sampling.
+Use default logger to write logs by random sampling.
 
 ```go
 text := "hello world"
 log.DebugSample("[sample] %s, test debug log", text)
 log.InfoSample("[sample] %s, test info log", text)
 log.WarnSample("[sample] %s, test warn log", text)
-log.ErrorSample(errors.New("log err"), "[sample] %s,test error log", text)
+log.ErrorSample(errors.New("log err"), "[sample] %s, test error log", text)
 log.ErrorIfSample(errors.New("log err from ErrorIfSample"), "[sample] %s, test error log", text)
 ```
