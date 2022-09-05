@@ -44,6 +44,23 @@ func TestConsoleLogger(t *testing.T) {
 	}
 }
 
+func TestConsoleLoggerWithBuffer(t *testing.T) {
+	testCases := []struct {
+		name      string
+		formatter string
+	}{
+		{"TextFormatter", formatter.TextFormatter},
+		{"JsonFormatter", formatter.JsonFormatter},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			InitDefaultLogger(newConsoleLoggerWithBuffer(level.DebugLevel, true).WithFormatter(formatter.New(tc.formatter)))
+			defer Close()
+			testLogs(t)
+		})
+	}
+}
+
 func TestEmptyLogger(t *testing.T) {
 	testCases := []struct {
 		name      string
