@@ -3,9 +3,16 @@ package log
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/no-src/log/formatter"
+	"github.com/no-src/log/internal/sync"
 	"github.com/no-src/log/level"
+)
+
+var (
+	concurrencyCount   = 3
+	concurrencyTimeout = time.Second * 5
 )
 
 func testLogs(t *testing.T) {
@@ -22,24 +29,50 @@ func testLogs(t *testing.T) {
 	DefaultLogger().Write([]byte("hello logger"))
 }
 
+func testLogsConcurrency(t *testing.T, testName string) {
+	wg := sync.WaitGroup{}
+	wg.Add(concurrencyCount)
+	for i := 0; i < concurrencyCount; i++ {
+		go func() {
+			testLogs(t)
+			wg.Done()
+		}()
+	}
+	if wg.WaitWithTimeout(concurrencyTimeout) {
+		t.Errorf("[concurrency] %s timeout for %s", testName, concurrencyTimeout.String())
+	}
+}
+
 func TestDefaultLogger(t *testing.T) {
 	defer Close()
 	testLogs(t)
 }
 
+func TestDefaultLogger_Concurrency(t *testing.T) {
+	defer Close()
+	testLogsConcurrency(t, "TestDefaultLogger_Concurrency")
+}
+
 func TestConsoleLogger(t *testing.T) {
 	testCases := []struct {
-		name      string
-		formatter string
+		name        string
+		formatter   string
+		concurrency bool
 	}{
-		{"TextFormatter", formatter.TextFormatter},
-		{"JsonFormatter", formatter.JsonFormatter},
+		{"TextFormatter", formatter.TextFormatter, false},
+		{"JsonFormatter", formatter.JsonFormatter, false},
+		{"TextFormatter Concurrency", formatter.TextFormatter, true},
+		{"JsonFormatter Concurrency", formatter.JsonFormatter, true},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			InitDefaultLogger(NewConsoleLogger(level.DebugLevel).WithFormatter(formatter.New(tc.formatter)))
 			defer Close()
-			testLogs(t)
+			if tc.concurrency {
+				testLogsConcurrency(t, "TestConsoleLogger")
+			} else {
+				testLogs(t)
+			}
 		})
 	}
 }

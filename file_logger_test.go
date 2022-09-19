@@ -10,11 +10,14 @@ import (
 
 func TestFileLogger(t *testing.T) {
 	testCases := []struct {
-		name      string
-		formatter string
+		name        string
+		formatter   string
+		concurrency bool
 	}{
-		{"TextFormatter", formatter.TextFormatter},
-		{"JsonFormatter", formatter.JsonFormatter},
+		{"TextFormatter", formatter.TextFormatter, false},
+		{"JsonFormatter", formatter.JsonFormatter, false},
+		{"TextFormatter Concurrency", formatter.TextFormatter, true},
+		{"JsonFormatter Concurrency", formatter.JsonFormatter, true},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -24,10 +27,13 @@ func TestFileLogger(t *testing.T) {
 			}
 			InitDefaultLogger(fileLogger.WithFormatter(formatter.New(tc.formatter)))
 			defer Close()
-			testLogs(t)
+			if tc.concurrency {
+				testLogsConcurrency(t, "TestFileLogger")
+			} else {
+				testLogs(t)
+			}
 		})
 	}
-
 }
 
 func TestFileLogger_WithAutoFlush(t *testing.T) {
