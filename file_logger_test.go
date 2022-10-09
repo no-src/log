@@ -21,11 +21,11 @@ func TestFileLogger(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			fileLogger, err := NewFileLogger(level.DebugLevel, "./logs", "ns_"+tc.formatter)
+			fLogger, err := NewFileLogger(level.DebugLevel, "./logs", "ns_"+tc.formatter)
 			if err != nil {
 				t.Fatal(err)
 			}
-			InitDefaultLogger(fileLogger.WithFormatter(formatter.New(tc.formatter)))
+			InitDefaultLogger(fLogger.WithFormatter(formatter.New(tc.formatter)))
 			defer Close()
 			if tc.concurrency {
 				testLogsConcurrency(t, "TestFileLogger")
@@ -72,11 +72,22 @@ func TestFileLogger_WithAutoFlushWithFlushDelay(t *testing.T) {
 }
 
 func TestConsoleLoggerAndFileLogger(t *testing.T) {
-	fileLogger, err := NewFileLogger(level.DebugLevel, "./multi_logs", "ns")
+	fLogger, err := NewFileLogger(level.DebugLevel, "./multi_logs", "ns")
 	if err != nil {
 		t.Fatal(err)
 	}
-	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel), fileLogger))
+	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel), fLogger))
+	defer Close()
+	testLogs(t)
+}
+
+func TestFileLogger_WithMultiInitFile(t *testing.T) {
+	fLogger, err := NewFileLogger(level.DebugLevel, "./multi_init_file_logs", "ns")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fLogger.(*fileLogger).initFile()
+	InitDefaultLogger(fLogger)
 	defer Close()
 	testLogs(t)
 }

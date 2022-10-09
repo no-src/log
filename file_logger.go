@@ -39,6 +39,7 @@ type fileLogger struct {
 	autoFlush     bool
 	flushInterval time.Duration
 	mu            sync.Mutex // avoid data race for writer
+	date          time.Time
 }
 
 type logMsg struct {
@@ -82,12 +83,30 @@ func (l *fileLogger) Close() error {
 }
 
 func (l *fileLogger) init() error {
+	if err := l.initFile(); err != nil {
+		return err
+	}
+	l.start()
+	l.startAutoFlush()
+	return nil
+}
+
+func (l *fileLogger) initFile() error {
+	now := time.Now()
+	timeFormat := "20060102"
+	if l.date.Format(timeFormat) == now.Format(timeFormat) {
+		return nil
+	}
+	// reset initialized
+	l.initialized = false
+	l.date = now
+
 	logDir := filepath.Clean(l.logDir)
 	prefix := strings.TrimSpace(l.filePrefix)
 	if len(prefix) > 0 {
 		prefix = filepath.Clean(prefix)
 	}
-	logFile := logDir + "/" + prefix + time.Now().Format("20060102") + ".log"
+	logFile := logDir + "/" + prefix + l.date.Format(timeFormat) + ".log"
 
 	_, err := stat(logDir)
 	if isNotExist(err) {
@@ -112,8 +131,6 @@ func (l *fileLogger) init() error {
 	}
 	l.writer = newWriter(f)
 	l.initialized = true
-	l.start()
-	l.startAutoFlush()
 	return nil
 }
 
