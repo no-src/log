@@ -13,6 +13,7 @@ import (
 	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/internal/cbool"
 	"github.com/no-src/log/level"
+	"github.com/no-src/log/option"
 )
 
 var (
@@ -29,17 +30,14 @@ var (
 type fileLogger struct {
 	baseLogger
 
-	logDir        string
-	in            chan logMsg
-	writer        *bufio.Writer
-	initialized   bool
-	filePrefix    string
-	closed        *cbool.CBool
-	close         chan struct{} // the log is closed, and wait to write all the logs
-	autoFlush     bool
-	flushInterval time.Duration
-	mu            sync.Mutex // avoid data race for writer
-	date          time.Time
+	opt         option.FileLoggerOption
+	in          chan logMsg
+	writer      *bufio.Writer
+	initialized bool
+	closed      *cbool.CBool
+	close       chan struct{} // the log is closed, and wait to write all the logs
+	mu          sync.Mutex    // avoid data race for writer
+	date        time.Time
 }
 
 type logMsg struct {
@@ -55,18 +53,26 @@ func NewFileLogger(lvl level.Level, logDir string, filePrefix string) (Logger, e
 
 // NewFileLoggerWithAutoFlush get a file logger
 func NewFileLoggerWithAutoFlush(lvl level.Level, logDir string, filePrefix string, autoFlush bool, flushInterval time.Duration) (Logger, error) {
+	return NewFileLoggerWithOption(option.FileLoggerOption{
+		Level:         lvl,
+		LogDir:        logDir,
+		FilePrefix:    filePrefix,
+		AutoFlush:     autoFlush,
+		FlushInterval: flushInterval,
+	})
+}
+
+// NewFileLoggerWithOption get a file logger with option
+func NewFileLoggerWithOption(opt option.FileLoggerOption) (Logger, error) {
 	logger := &fileLogger{
-		logDir:        logDir,
-		in:            make(chan logMsg, 100),
-		close:         make(chan struct{}, 1),
-		filePrefix:    filePrefix,
-		autoFlush:     autoFlush,
-		flushInterval: flushInterval,
-		mu:            sync.Mutex{},
-		closed:        cbool.New(false),
+		opt:    opt,
+		in:     make(chan logMsg, 100),
+		close:  make(chan struct{}, 1),
+		mu:     sync.Mutex{},
+		closed: cbool.New(false),
 	}
 	// init baseLogger
-	logger.baseLogger.init(logger, lvl, true)
+	logger.baseLogger.init(logger, opt.Level, true)
 	// init fileLogger
 	err := logger.init()
 	return logger, err
@@ -101,8 +107,8 @@ func (l *fileLogger) initFile() error {
 	l.initialized = false
 	l.date = now
 
-	logDir := filepath.Clean(l.logDir)
-	prefix := strings.TrimSpace(l.filePrefix)
+	logDir := filepath.Clean(l.opt.LogDir)
+	prefix := strings.TrimSpace(l.opt.FilePrefix)
 	if len(prefix) > 0 {
 		prefix = filepath.Clean(prefix)
 	}
@@ -172,11 +178,11 @@ func (l *fileLogger) innerLog(format string, args ...interface{}) {
 // startAutoFlush start to auto flush log to file per flushInterval
 // if buffered is empty by 10 times checked, to delay wait next check
 func (l *fileLogger) startAutoFlush() {
-	if !l.autoFlush || l.flushInterval <= 0 {
+	if !l.opt.AutoFlush || l.opt.FlushInterval <= 0 {
 		return
 	}
 	go func() {
-		wait := l.flushInterval
+		wait := l.opt.FlushInterval
 		nop := 0
 		delayCheckCount := 10
 		for {
@@ -189,12 +195,12 @@ func (l *fileLogger) startAutoFlush() {
 			l.mu.Unlock()
 			if buffered > 0 {
 				l.in <- flushLogMsg
-				wait = l.flushInterval
+				wait = l.opt.FlushInterval
 				nop = 0
 			} else {
 				nop++
 				if nop >= delayCheckCount {
-					wait += l.flushInterval
+					wait += l.opt.FlushInterval
 					nop = 0
 				}
 			}
