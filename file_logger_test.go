@@ -1,6 +1,7 @@
 package log
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -49,6 +50,8 @@ func TestFileLogger_WithAutoFlush(t *testing.T) {
 }
 
 func TestFileLogger_WithAutoFlushWithCloseWhenWrite(t *testing.T) {
+	var wg sync.WaitGroup
+	wg.Add(1)
 	wait := time.Second * 1
 	autoFlushFileLogger, err := NewFileLoggerWithAutoFlush(level.DebugLevel, "./logs", "ns", true, wait)
 	if err != nil {
@@ -57,9 +60,10 @@ func TestFileLogger_WithAutoFlushWithCloseWhenWrite(t *testing.T) {
 	InitDefaultLogger(autoFlushFileLogger)
 	go func() {
 		Close()
+		wg.Done()
 	}()
 	testLogs(t)
-	<-time.After(wait + time.Second)
+	wg.Wait()
 }
 
 func TestFileLogger_WithAutoFlushWithFlushDelay(t *testing.T) {
