@@ -13,4 +13,5 @@ type FileLoggerOption struct {
 	FilePrefix    string
 	AutoFlush     bool
 	FlushInterval time.Duration
+	SplitDate     bool
 }

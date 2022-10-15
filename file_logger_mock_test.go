@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/no-src/log/level"
+	"github.com/no-src/log/option"
 )
 
 func TestFileLogger_WithNotExistFile(t *testing.T) {
@@ -96,6 +97,42 @@ func TestFileLogger_WithAutoFlushWithWriteErrorAndNoAutoFlush(t *testing.T) {
 	<-time.After(wait + time.Second)
 }
 
+func TestFileLogger_WithMultiInitFile(t *testing.T) {
+	defer func() {
+		initTimeMock()
+	}()
+	fLogger, err := NewFileLogger(level.DebugLevel, "./multi_init_file_logs", "ns")
+	if err != nil {
+		t.Fatal(err)
+	}
+	now = nowMock
+	fLogger.(*fileLogger).initFile(true)
+	InitDefaultLogger(fLogger)
+	defer Close()
+}
+
+func TestFileLogger_WithSplitDateError(t *testing.T) {
+	defer func() {
+		initTimeMock()
+		initOSMock()
+	}()
+	fLogger, err := NewFileLoggerWithOption(option.FileLoggerOption{
+		Level:      level.DebugLevel,
+		LogDir:     "./split_date_logs_error",
+		FilePrefix: "ns",
+		SplitDate:  true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	InitDefaultLogger(fLogger)
+	defer Close()
+	isNotExist = isNotExistAlwaysTrueMock
+	mkdirAll = mkdirAllErrorMock
+	now = nowMock
+	testLogs(t)
+}
+
 func init() {
 	initFileLoggerMock()
 }
@@ -131,6 +168,10 @@ func initOSMock() {
 	openFile = openFileMock
 }
 
+func initTimeMock() {
+	now = time.Now
+}
+
 func isNotExistAlwaysFalseMock(err error) bool {
 	return false
 }
@@ -156,9 +197,13 @@ func createErrorMock(name string) (*os.File, error) {
 }
 
 func openFileMock(name string, flag int, perm os.FileMode) (*os.File, error) {
-	return nil, nil
+	return os.Stdout, nil
 }
 
 func openFileErrorMock(name string, flag int, perm os.FileMode) (*os.File, error) {
 	return nil, errors.New("the OpenFile error test")
+}
+
+func nowMock() time.Time {
+	return time.Now().Add(time.Hour * 24)
 }

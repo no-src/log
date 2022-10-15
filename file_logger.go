@@ -25,6 +25,7 @@ var (
 	mkdirAll    = os.MkdirAll
 	create      = os.Create
 	openFile    = os.OpenFile
+	now         = time.Now
 )
 
 type fileLogger struct {
@@ -38,6 +39,7 @@ type fileLogger struct {
 	close       chan struct{} // the log is closed, and wait to write all the logs
 	mu          sync.Mutex    // avoid data race for writer
 	date        time.Time
+	file        *os.File
 }
 
 type logMsg struct {
@@ -89,7 +91,7 @@ func (l *fileLogger) Close() error {
 }
 
 func (l *fileLogger) init() error {
-	if err := l.initFile(); err != nil {
+	if err := l.initFile(true); err != nil {
 		return err
 	}
 	l.start()
@@ -97,22 +99,24 @@ func (l *fileLogger) init() error {
 	return nil
 }
 
-func (l *fileLogger) initFile() error {
-	now := time.Now()
+func (l *fileLogger) initFile(splitDate bool) error {
+	if !splitDate {
+		return nil
+	}
+	date := now()
 	timeFormat := "20060102"
-	if l.date.Format(timeFormat) == now.Format(timeFormat) {
+	if l.date.Format(timeFormat) == date.Format(timeFormat) {
 		return nil
 	}
 	// reset initialized
 	l.initialized = false
-	l.date = now
 
 	logDir := filepath.Clean(l.opt.LogDir)
 	prefix := strings.TrimSpace(l.opt.FilePrefix)
 	if len(prefix) > 0 {
 		prefix = filepath.Clean(prefix)
 	}
-	logFile := logDir + "/" + prefix + l.date.Format(timeFormat) + ".log"
+	logFile := logDir + "/" + prefix + date.Format(timeFormat) + ".log"
 
 	_, err := stat(logDir)
 	if isNotExist(err) {
@@ -135,8 +139,21 @@ func (l *fileLogger) initFile() error {
 		l.innerLog("init file logger err, can't open the log file. %s", err)
 		return err
 	}
+
+	if l.writer != nil {
+		l.writer.Flush()
+	}
+
 	l.writer = newWriter(f)
 	l.initialized = true
+	l.date = date
+
+	if l.file != nil {
+		if err = l.file.Close(); err != nil {
+			l.innerLog("close file error => %s %v", l.file.Name(), err)
+		}
+	}
+	l.file = f
 	return nil
 }
 
@@ -157,6 +174,7 @@ func (l *fileLogger) write() {
 	if msg.closed {
 		if l.initialized && l.writer != nil {
 			l.writer.Flush()
+			l.file.Close()
 		}
 		l.close <- struct{}{}
 	} else if msg.flush && l.initialized && l.writer != nil && l.writer.Buffered() > 0 {
@@ -165,6 +183,10 @@ func (l *fileLogger) write() {
 			l.innerLog("file logger flush log error. %s", err)
 		}
 	} else if l.initialized && l.writer != nil && len(msg.log) > 0 {
+		if err := l.initFile(l.opt.SplitDate); err != nil {
+			l.innerLog("init log file error. %s", err)
+			return
+		}
 		if _, err := l.writer.Write(msg.log); err != nil {
 			l.innerLog("file logger write log error. %s", err)
 		}
@@ -187,7 +209,7 @@ func (l *fileLogger) startAutoFlush() {
 		delayCheckCount := 10
 		for {
 			<-time.After(wait)
-			if l.closed.Get() || l.writer == nil {
+			if l.closed.Get() {
 				return
 			}
 			l.mu.Lock()
@@ -217,7 +239,7 @@ func (l *fileLogger) Write(p []byte) (n int, err error) {
 	}
 	cp := make([]byte, pLen)
 	copy(cp, p)
-	if l.initialized && !l.closed.Get() {
+	if !l.closed.Get() {
 		l.in <- logMsg{
 			log:    cp,
 			closed: false,

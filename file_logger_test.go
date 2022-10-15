@@ -6,6 +6,7 @@ import (
 
 	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/level"
+	"github.com/no-src/log/option"
 )
 
 func TestFileLogger(t *testing.T) {
@@ -81,12 +82,16 @@ func TestConsoleLoggerAndFileLogger(t *testing.T) {
 	testLogs(t)
 }
 
-func TestFileLogger_WithMultiInitFile(t *testing.T) {
-	fLogger, err := NewFileLogger(level.DebugLevel, "./multi_init_file_logs", "ns")
+func TestFileLogger_WithSplitDate(t *testing.T) {
+	fLogger, err := NewFileLoggerWithOption(option.FileLoggerOption{
+		Level:      level.DebugLevel,
+		LogDir:     "./split_date_logs",
+		FilePrefix: "ns",
+		SplitDate:  true,
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	fLogger.(*fileLogger).initFile()
 	InitDefaultLogger(fLogger)
 	defer Close()
 	testLogs(t)
