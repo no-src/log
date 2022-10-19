@@ -63,6 +63,8 @@ func TestFileLogger_WithAutoFlushWithCloseWhenWrite(t *testing.T) {
 		wg.Done()
 	}()
 	testLogs(t)
+	// wait to close and stop the auto flush
+	<-time.After(wait + time.Second)
 	wg.Wait()
 }
 
