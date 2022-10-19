@@ -55,13 +55,7 @@ func NewFileLogger(lvl level.Level, logDir string, filePrefix string) (Logger, e
 
 // NewFileLoggerWithAutoFlush get a file logger
 func NewFileLoggerWithAutoFlush(lvl level.Level, logDir string, filePrefix string, autoFlush bool, flushInterval time.Duration) (Logger, error) {
-	return NewFileLoggerWithOption(option.FileLoggerOption{
-		Level:         lvl,
-		LogDir:        logDir,
-		FilePrefix:    filePrefix,
-		AutoFlush:     autoFlush,
-		FlushInterval: flushInterval,
-	})
+	return NewFileLoggerWithOption(option.NewFileLoggerOption(lvl, logDir, filePrefix, autoFlush, flushInterval, false))
 }
 
 // NewFileLoggerWithOption get a file logger with option

@@ -15,3 +15,15 @@ type FileLoggerOption struct {
 	FlushInterval time.Duration
 	SplitDate     bool
 }
+
+// NewFileLoggerOption returns an instance of the FileLoggerOption
+func NewFileLoggerOption(lvl level.Level, logDir string, filePrefix string, autoFlush bool, flushInterval time.Duration, splitDate bool) FileLoggerOption {
+	return FileLoggerOption{
+		Level:         lvl,
+		LogDir:        logDir,
+		FilePrefix:    filePrefix,
+		AutoFlush:     autoFlush,
+		FlushInterval: flushInterval,
+		SplitDate:     splitDate,
+	}
+}
