@@ -130,6 +130,16 @@ func TestBaseLogger_Close(t *testing.T) {
 	testLogs(t)
 }
 
+func TestReadWriteLoggerConcurrency(t *testing.T) {
+	go func() {
+		for i := 0; i < 10; i++ {
+			InitDefaultLogger(NewConsoleLogger(level.DebugLevel))
+		}
+	}()
+	testLogsConcurrency(t, "TestReadWriteLoggerConcurrency")
+	defer Close()
+}
+
 type minLogger struct {
 	baseLogger
 }

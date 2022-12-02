@@ -1,12 +1,15 @@
 package log
 
 import (
+	"sync"
+
 	"github.com/no-src/log/level"
 )
 
 var (
 	defaultLogger       Logger
 	defaultSampleLogger Logger
+	mu                  sync.RWMutex
 )
 
 const defaultSampleRate = 1
@@ -20,6 +23,8 @@ func InitDefaultLogger(logger Logger) {
 // InitDefaultLoggerWithSample init a default logger and sample logger
 // if not specified, default is consoleLogger with InfoLevel, and default sample rate is 1
 func InitDefaultLoggerWithSample(logger Logger, sampleRate float64) {
+	mu.Lock()
+	defer mu.Unlock()
 	defaultLogger = logger
 	if defaultLogger == nil {
 		defaultLogger = NewEmptyLogger()
@@ -29,22 +34,22 @@ func InitDefaultLoggerWithSample(logger Logger, sampleRate float64) {
 
 // Debug write the debug log
 func Debug(format string, args ...interface{}) {
-	defaultLogger.Debug(format, args...)
+	DefaultLogger().Debug(format, args...)
 }
 
 // Info write the info log
 func Info(format string, args ...interface{}) {
-	defaultLogger.Info(format, args...)
+	DefaultLogger().Info(format, args...)
 }
 
 // Warn write the warn log
 func Warn(format string, args ...interface{}) {
-	defaultLogger.Warn(format, args...)
+	DefaultLogger().Warn(format, args...)
 }
 
 // Error write the error log
 func Error(err error, format string, args ...interface{}) {
-	defaultLogger.Error(err, format, args...)
+	DefaultLogger().Error(err, format, args...)
 }
 
 // ErrorIf write the error log if err is not nil
@@ -57,22 +62,22 @@ func ErrorIf(err error, format string, args ...interface{}) error {
 
 // DebugSample write the debug log by random sampling
 func DebugSample(format string, args ...interface{}) {
-	defaultSampleLogger.Debug(format, args...)
+	DefaultSampleLogger().Debug(format, args...)
 }
 
 // InfoSample write the info log by random sampling
 func InfoSample(format string, args ...interface{}) {
-	defaultSampleLogger.Info(format, args...)
+	DefaultSampleLogger().Info(format, args...)
 }
 
 // WarnSample write the warn log by random sampling
 func WarnSample(format string, args ...interface{}) {
-	defaultSampleLogger.Warn(format, args...)
+	DefaultSampleLogger().Warn(format, args...)
 }
 
 // ErrorSample write the error log by random sampling
 func ErrorSample(err error, format string, args ...interface{}) {
-	defaultSampleLogger.Error(err, format, args...)
+	DefaultSampleLogger().Error(err, format, args...)
 }
 
 // ErrorIfSample write the error log by random sampling if err is not nil
@@ -85,17 +90,26 @@ func ErrorIfSample(err error, format string, args ...interface{}) error {
 
 // Log write the log without level
 func Log(format string, args ...interface{}) {
-	defaultLogger.Log(format, args...)
+	DefaultLogger().Log(format, args...)
 }
 
 // Close close the current logger
 func Close() error {
-	return defaultLogger.Close()
+	return DefaultLogger().Close()
 }
 
 // DefaultLogger return the global default logger
 func DefaultLogger() Logger {
+	mu.RLock()
+	defer mu.RUnlock()
 	return defaultLogger
+}
+
+// DefaultSampleLogger return the global default sample logger
+func DefaultSampleLogger() Logger {
+	mu.RLock()
+	defer mu.RUnlock()
+	return defaultSampleLogger
 }
 
 func init() {
