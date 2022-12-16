@@ -1,6 +1,6 @@
 # log
 
-[![Build](https://img.shields.io/github/workflow/status/no-src/log/Go)](https://github.com/no-src/log/actions)
+[![Build](https://img.shields.io/github/actions/workflow/status/no-src/log/go.yml?branch=main)](https://github.com/no-src/log/actions)
 [![License](https://img.shields.io/github/license/no-src/log)](https://github.com/no-src/log/blob/main/LICENSE)
 [![Go Reference](https://pkg.go.dev/badge/github.com/no-src/log.svg)](https://pkg.go.dev/github.com/no-src/log)
 [![Go Report Card](https://goreportcard.com/badge/github.com/no-src/log)](https://goreportcard.com/report/github.com/no-src/log)
