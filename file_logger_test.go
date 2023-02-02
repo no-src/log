@@ -103,6 +103,27 @@ func TestFileLogger_WithSplitDate(t *testing.T) {
 	testLogs(t)
 }
 
-func init() {
-	initFileLoggerMock()
+func TestFileLogger_InitFileError(t *testing.T) {
+	_, err := NewFileLogger(level.DebugLevel, "/", "")
+	if err == nil {
+		t.Errorf("expect to get an error but get nil")
+	}
+}
+
+func TestFileLogger_WithMultiInitFile(t *testing.T) {
+	fLogger, err := NewFileLogger(level.DebugLevel, "./multi_init_file_logs", "ns")
+	if err != nil {
+		t.Fatal(err)
+	}
+	now = tomorrow
+	defer func() {
+		now = time.Now
+	}()
+	fLogger.(*fileLogger).initFile(true)
+	InitDefaultLogger(fLogger)
+	defer Close()
+}
+
+func tomorrow() time.Time {
+	return time.Now().Add(time.Hour * 24)
 }
