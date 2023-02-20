@@ -23,7 +23,7 @@ func (f *textFormatter) Serialize(c content.Content) ([]byte, error) {
 	content := fmt.Sprintf(c.Log, c.Args...)
 	format = fmt.Sprintf(format, timeSection, c.Level.String(), content)
 	if c.Error != nil {
-		format = fmt.Sprintf(format+". %s", c.Error)
+		format = format + ". " + c.Error.Error()
 	}
 	format = formatter.AppendRowTerminator(format)
 	return []byte(format), nil

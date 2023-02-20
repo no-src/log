@@ -19,7 +19,7 @@ func newJsonFormatter() formatter.Formatter {
 func (f *jsonFormatter) Serialize(c content.Content) ([]byte, error) {
 	c.Log = fmt.Sprintf(c.Log, c.Args...)
 	if c.Error != nil {
-		c.Log = fmt.Sprintf(c.Log+". %s", c.Error)
+		c.Log = c.Log + ". " + c.Error.Error()
 	}
 	buf := new(bytes.Buffer)
 	encoder := json.NewEncoder(buf)
