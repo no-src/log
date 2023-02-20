@@ -27,6 +27,7 @@ func TestJsonFormatter_Serialize(t *testing.T) {
 		{"debug with args and append time", content.NewContentWithTime(level.DebugLevel, nil, logTimeP, "<json formatter> %s %s", "hello", "world"), `{"level":"DEBUG","time":"2022-06-25 23:59:59","log":"<json formatter> hello world"}`},
 		{"error no args and append time", content.NewContentWithTime(level.DebugLevel, errors.New("test error"), logTimeP, "<json formatter> hello"), `{"level":"DEBUG","time":"2022-06-25 23:59:59","log":"<json formatter> hello. test error"}`},
 		{"error with args and append time", content.NewContentWithTime(level.DebugLevel, errors.New("test error"), logTimeP, "<json formatter> %s %s", "hello", "world"), `{"level":"DEBUG","time":"2022-06-25 23:59:59","log":"<json formatter> hello world. test error"}`},
+		{"error with args that contain the format character", content.NewContentWithTime(level.DebugLevel, errors.New("test error"), logTimeP, "<json formatter> %s %s", "hello%s%v", "world"), `{"level":"DEBUG","time":"2022-06-25 23:59:59","log":"<json formatter> hello%s%v world. test error"}`},
 	}
 	f := newJsonFormatter()
 	for _, tc := range testCases {

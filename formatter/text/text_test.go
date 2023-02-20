@@ -27,6 +27,7 @@ func TestTextFormatter_Serialize(t *testing.T) {
 		{"debug with args and append time", content.NewContentWithTime(level.DebugLevel, nil, logTimeP, "<text formatter> %s %s", "hello", "world"), "[2022-06-25 23:59:59] [DEBUG] <text formatter> hello world"},
 		{"error no args and append time", content.NewContentWithTime(level.DebugLevel, errors.New("test error"), logTimeP, "<text formatter> hello"), "[2022-06-25 23:59:59] [DEBUG] <text formatter> hello. test error"},
 		{"error with args and append time", content.NewContentWithTime(level.DebugLevel, errors.New("test error"), logTimeP, "<text formatter> %s %s", "hello", "world"), "[2022-06-25 23:59:59] [DEBUG] <text formatter> hello world. test error"},
+		{"error with args that contain the format character", content.NewContentWithTime(level.DebugLevel, errors.New("test error"), logTimeP, "<text formatter> %s %s", "hello%s%v", "world"), "[2022-06-25 23:59:59] [DEBUG] <text formatter> hello%s%v world. test error"},
 	}
 	f := newTextFormatter()
 	for _, tc := range testCases {
