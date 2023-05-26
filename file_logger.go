@@ -48,9 +48,9 @@ type logMsg struct {
 	flush  bool
 }
 
-// NewFileLogger get a file logger
+// NewFileLogger get a default file logger, auto flush logs to file per 3 seconds by default
 func NewFileLogger(lvl level.Level, logDir string, filePrefix string) (Logger, error) {
-	return NewFileLoggerWithAutoFlush(lvl, logDir, filePrefix, false, time.Duration(0))
+	return NewFileLoggerWithAutoFlush(lvl, logDir, filePrefix, true, time.Second*3)
 }
 
 // NewFileLoggerWithAutoFlush get a file logger
