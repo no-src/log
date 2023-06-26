@@ -5,6 +5,13 @@ type Error struct {
 	err error
 }
 
+// NewError return a custom error wrap the real error
+func NewError(err error) error {
+	return Error{
+		err: err,
+	}
+}
+
 // Error implement interface error
 func (e Error) Error() string {
 	if e.err == nil {

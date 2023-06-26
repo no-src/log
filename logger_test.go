@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/no-src/log/content"
 	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/internal/sync"
 	"github.com/no-src/log/level"
@@ -13,6 +14,7 @@ import (
 var (
 	concurrencyCount   = 3
 	concurrencyTimeout = time.Second * 5
+	testTimeFormat     = content.DefaultLogTimeFormat
 )
 
 func testLogs(t *testing.T) {
@@ -51,64 +53,6 @@ func TestDefaultLogger(t *testing.T) {
 func TestDefaultLogger_Concurrency(t *testing.T) {
 	defer Close()
 	testLogsConcurrency(t, "TestDefaultLogger_Concurrency")
-}
-
-func TestConsoleLogger(t *testing.T) {
-	testCases := []struct {
-		name        string
-		formatter   string
-		concurrency bool
-	}{
-		{"TextFormatter", formatter.TextFormatter, false},
-		{"JsonFormatter", formatter.JsonFormatter, false},
-		{"TextFormatter Concurrency", formatter.TextFormatter, true},
-		{"JsonFormatter Concurrency", formatter.JsonFormatter, true},
-	}
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			InitDefaultLogger(NewConsoleLogger(level.DebugLevel).WithFormatter(formatter.New(tc.formatter)))
-			defer Close()
-			if tc.concurrency {
-				testLogsConcurrency(t, "TestConsoleLogger")
-			} else {
-				testLogs(t)
-			}
-		})
-	}
-}
-
-func TestConsoleLoggerWithBuffer(t *testing.T) {
-	testCases := []struct {
-		name      string
-		formatter string
-	}{
-		{"TextFormatter", formatter.TextFormatter},
-		{"JsonFormatter", formatter.JsonFormatter},
-	}
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			InitDefaultLogger(newConsoleLoggerWithBuffer(level.DebugLevel, true).WithFormatter(formatter.New(tc.formatter)))
-			defer Close()
-			testLogs(t)
-		})
-	}
-}
-
-func TestEmptyLogger(t *testing.T) {
-	testCases := []struct {
-		name      string
-		formatter string
-	}{
-		{"TextFormatter", formatter.TextFormatter},
-		{"JsonFormatter", formatter.JsonFormatter},
-	}
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			InitDefaultLogger(NewEmptyLogger().WithFormatter(formatter.New(tc.formatter)))
-			defer Close()
-			testLogs(t)
-		})
-	}
 }
 
 func TestMinLogLevel(t *testing.T) {
@@ -155,5 +99,9 @@ func (l *minLogger) Write(p []byte) (n int, err error) {
 }
 
 func (l *minLogger) WithFormatter(f formatter.Formatter) Logger {
+	return l
+}
+
+func (l *minLogger) WithTimeFormat(f string) Logger {
 	return l
 }

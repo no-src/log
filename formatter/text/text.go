@@ -18,7 +18,7 @@ func (f *textFormatter) Serialize(c content.Content) ([]byte, error) {
 	var format = "%s[%s] %s" // [time] [level] content<. error>
 	var timeSection string
 	if c.AppendTime && c.Time != nil {
-		timeSection = fmt.Sprintf("[%s] ", c.Time.Time().Format(content.LogTimeFormat))
+		timeSection = fmt.Sprintf("[%s] ", c.Time)
 	}
 	content := fmt.Sprintf(c.Log, c.Args...)
 	format = fmt.Sprintf(format, timeSection, c.Level.String(), content)

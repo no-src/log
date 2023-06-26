@@ -244,8 +244,11 @@ func (l *fileLogger) Write(p []byte) (n int, err error) {
 }
 
 func (l *fileLogger) WithFormatter(f formatter.Formatter) Logger {
-	if f != nil {
-		l.f = f
-	}
+	l.setFormatter(f)
+	return l
+}
+
+func (l *fileLogger) WithTimeFormat(f string) Logger {
+	l.setTimeFormat(f)
 	return l
 }

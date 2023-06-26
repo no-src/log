@@ -17,10 +17,10 @@ type Content struct {
 }
 
 // NewContent return an instance of Content
-func NewContent(lvl level.Level, err error, appendTime bool, log string, args ...interface{}) Content {
+func NewContent(lvl level.Level, err error, appendTime bool, timeFormat string, log string, args ...interface{}) Content {
 	var t *Time
 	if appendTime {
-		t = NewTime(time.Now())
+		t = NewTimeWithFormat(time.Now(), timeFormat)
 	}
 	return NewContentWithTime(lvl, err, t, log, args...)
 }
@@ -35,9 +35,7 @@ func NewContentWithTime(lvl level.Level, err error, t *Time, log string, args ..
 		Time:       t,
 	}
 	if err != nil {
-		c.Error = Error{
-			err: err,
-		}
+		c.Error = NewError(err)
 	}
 	return c
 }

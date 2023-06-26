@@ -44,3 +44,7 @@ func (l *emptyLogger) Write(p []byte) (n int, err error) {
 func (l *emptyLogger) WithFormatter(f formatter.Formatter) Logger {
 	return l
 }
+
+func (l *emptyLogger) WithTimeFormat(f string) Logger {
+	return l
+}

@@ -33,4 +33,6 @@ type Writer interface {
 type Option interface {
 	// WithFormatter set the log formatter and return logger self
 	WithFormatter(f formatter.Formatter) Logger
+	// WithTimeFormat set the time format and return logger self
+	WithTimeFormat(f string) Logger
 }

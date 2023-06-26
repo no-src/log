@@ -3,6 +3,7 @@ package log
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/level"
@@ -37,6 +38,26 @@ func TestMultiLogger_WithFormatter(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// the WithFormatter is ineffective in the multiLogger
 			InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel)).WithFormatter(formatter.New(tc.formatter)))
+			defer Close()
+			testLogs(t)
+		})
+	}
+}
+
+func TestMultiLogger_WithTimeFormat(t *testing.T) {
+	testCases := []struct {
+		name   string
+		format string
+	}{
+		{"empty", ""},
+		{"default", testTimeFormat},
+		{"RFC3339", time.RFC3339},
+		{"RFC3339Nano", time.RFC3339Nano},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// the WithTimeFormat is ineffective in the multiLogger
+			InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel)).WithTimeFormat(tc.format))
 			defer Close()
 			testLogs(t)
 		})

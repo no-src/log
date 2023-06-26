@@ -15,6 +15,7 @@ type baseLogger struct {
 	lvl        level.Level // min log level
 	f          formatter.Formatter
 	appendTime bool
+	timeFormat string
 }
 
 func (l *baseLogger) Debug(format string, args ...interface{}) {
@@ -48,7 +49,7 @@ func (l *baseLogger) log(lvl level.Level, format string, args ...interface{}) {
 
 func (l *baseLogger) logWithErr(err error, lvl level.Level, format string, args ...interface{}) {
 	if checkLogLevel(l.lvl, lvl) {
-		data, _ := l.f.Serialize(content.NewContent(lvl, err, l.appendTime, format, args...))
+		data, _ := l.f.Serialize(content.NewContent(lvl, err, l.appendTime, l.timeFormat, format, args...))
 		l.Log(string(data))
 	}
 }
@@ -66,6 +67,20 @@ func (l *baseLogger) init(w Writer, lvl level.Level, appendTime bool) {
 	l.lvl = lvl
 	l.f = formatter.Default()
 	l.appendTime = appendTime
+	l.setTimeFormat(content.DefaultLogTimeFormat)
+}
+
+func (l *baseLogger) setFormatter(f formatter.Formatter) {
+	if f != nil {
+		l.f = f
+	}
+}
+
+func (l *baseLogger) setTimeFormat(f string) {
+	if len(f) == 0 {
+		f = content.DefaultLogTimeFormat
+	}
+	l.timeFormat = f
 }
 
 func checkLogLevel(lvl level.Level, currentLevel level.Level) bool {
