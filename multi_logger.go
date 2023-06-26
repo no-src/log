@@ -75,3 +75,7 @@ func (l *multiLogger) Write(p []byte) (n int, err error) {
 func (l *multiLogger) WithFormatter(f formatter.Formatter) Logger {
 	return l
 }
+
+func (l *multiLogger) WithTimeFormat(f string) Logger {
+	return l
+}

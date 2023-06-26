@@ -50,8 +50,11 @@ func (l *consoleLogger) Close() error {
 }
 
 func (l *consoleLogger) WithFormatter(f formatter.Formatter) Logger {
-	if f != nil {
-		l.f = f
-	}
+	l.setFormatter(f)
+	return l
+}
+
+func (l *consoleLogger) WithTimeFormat(f string) Logger {
+	l.setTimeFormat(f)
 	return l
 }

@@ -15,11 +15,12 @@ func TestFileLogger(t *testing.T) {
 		name        string
 		formatter   string
 		concurrency bool
+		timeFormat  string
 	}{
-		{"TextFormatter", formatter.TextFormatter, false},
-		{"JsonFormatter", formatter.JsonFormatter, false},
-		{"TextFormatter Concurrency", formatter.TextFormatter, true},
-		{"JsonFormatter Concurrency", formatter.JsonFormatter, true},
+		{"TextFormatter", formatter.TextFormatter, false, testTimeFormat},
+		{"JsonFormatter", formatter.JsonFormatter, false, ""},
+		{"TextFormatter Concurrency", formatter.TextFormatter, true, testTimeFormat},
+		{"JsonFormatter Concurrency", formatter.JsonFormatter, true, ""},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -27,7 +28,7 @@ func TestFileLogger(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			InitDefaultLogger(fLogger.WithFormatter(formatter.New(tc.formatter)))
+			InitDefaultLogger(fLogger.WithFormatter(formatter.New(tc.formatter)).WithTimeFormat(tc.timeFormat))
 			defer Close()
 			if tc.concurrency {
 				testLogsConcurrency(t, "TestFileLogger")

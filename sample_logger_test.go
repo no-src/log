@@ -23,7 +23,7 @@ func TestSampleLogger(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			InitDefaultLogger(NewDefaultSampleLogger(NewConsoleLogger(level.DebugLevel), tc.sampleRate).WithFormatter(formatter.New(tc.formatter)))
+			InitDefaultLogger(NewDefaultSampleLogger(NewConsoleLogger(level.DebugLevel), tc.sampleRate).WithFormatter(formatter.New(tc.formatter)).WithTimeFormat(testTimeFormat))
 			testLogs(t)
 			Close()
 		})
