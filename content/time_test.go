@@ -23,7 +23,7 @@ func TestTime_MarshalText(t *testing.T) {
 		}
 
 		expect := now.Format(tc.format)
-		ti := NewTime(time.Now())
+		ti := NewTime(now)
 		data, err := ti.MarshalText()
 		if err != nil {
 			t.Errorf("Time.MarshalText error => %v", err)
