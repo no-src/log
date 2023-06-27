@@ -67,7 +67,7 @@ func (l *baseLogger) init(w Writer, lvl level.Level, appendTime bool) {
 	l.lvl = lvl
 	l.f = formatter.Default()
 	l.appendTime = appendTime
-	l.setTimeFormat(content.DefaultLogTimeFormat)
+	l.setTimeFormat(content.DefaultLogTimeFormat())
 }
 
 func (l *baseLogger) setFormatter(f formatter.Formatter) {
@@ -78,7 +78,7 @@ func (l *baseLogger) setFormatter(f formatter.Formatter) {
 
 func (l *baseLogger) setTimeFormat(f string) {
 	if len(f) == 0 {
-		f = content.DefaultLogTimeFormat
+		f = content.DefaultLogTimeFormat()
 	}
 	l.timeFormat = f
 }

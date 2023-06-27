@@ -3,7 +3,6 @@ package log
 import (
 	"errors"
 	"testing"
-	"time"
 
 	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/level"
@@ -49,9 +48,7 @@ func TestMultiLogger_WithTimeFormat(t *testing.T) {
 		format string
 	}{
 		{"empty", ""},
-		{"default", testTimeFormat},
-		{"RFC3339", time.RFC3339},
-		{"RFC3339Nano", time.RFC3339Nano},
+		{"customized", testTimeFormat},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {

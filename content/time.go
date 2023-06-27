@@ -2,9 +2,8 @@ package content
 
 import "time"
 
-const (
-	// DefaultLogTimeFormat the default log time format
-	DefaultLogTimeFormat = "2006-01-02 15:04:05"
+var (
+	defaultLogTimeFormat = "2006-01-02 15:04:05"
 )
 
 // Time the custom Time for log
@@ -13,9 +12,21 @@ type Time struct {
 	format string
 }
 
+// InitDefaultLogTimeFormat init the global default log time format
+func InitDefaultLogTimeFormat(f string) {
+	if len(f) > 0 {
+		defaultLogTimeFormat = f
+	}
+}
+
+// DefaultLogTimeFormat return the default log time format
+func DefaultLogTimeFormat() string {
+	return defaultLogTimeFormat
+}
+
 // NewTime convert time.Time to content.Time pointer with default format
 func NewTime(time time.Time) *Time {
-	return NewTimeWithFormat(time, DefaultLogTimeFormat)
+	return NewTimeWithFormat(time, DefaultLogTimeFormat())
 }
 
 // NewTimeWithFormat convert time.Time to content.Time pointer with custom format
