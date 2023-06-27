@@ -67,9 +67,11 @@ func (l *sampleLogger) sample() bool {
 }
 
 func (l *sampleLogger) WithFormatter(f formatter.Formatter) Logger {
+	l.logger.WithFormatter(f)
 	return l
 }
 
 func (l *sampleLogger) WithTimeFormat(f string) Logger {
+	l.logger.WithTimeFormat(f)
 	return l
 }

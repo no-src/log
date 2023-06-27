@@ -36,7 +36,6 @@ func TestMultiLogger_WithFormatter(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// the WithFormatter is ineffective in the multiLogger
 			InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel)).WithFormatter(formatter.New(tc.formatter)))
 			defer Close()
 			testLogs(t)
@@ -56,7 +55,6 @@ func TestMultiLogger_WithTimeFormat(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// the WithTimeFormat is ineffective in the multiLogger
 			InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel)).WithTimeFormat(tc.format))
 			defer Close()
 			testLogs(t)
