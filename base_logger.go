@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/no-src/log/content"
 	"github.com/no-src/log/formatter"
@@ -16,6 +17,7 @@ type baseLogger struct {
 	f          formatter.Formatter
 	appendTime bool
 	timeFormat string
+	optMu      sync.RWMutex // protect Option
 }
 
 func (l *baseLogger) Debug(format string, args ...interface{}) {
@@ -49,7 +51,11 @@ func (l *baseLogger) log(lvl level.Level, format string, args ...interface{}) {
 
 func (l *baseLogger) logWithErr(err error, lvl level.Level, format string, args ...interface{}) {
 	if checkLogLevel(l.lvl, lvl) {
-		data, _ := l.f.Serialize(content.NewContent(lvl, err, l.appendTime, l.timeFormat, format, args...))
+		l.optMu.RLock()
+		c := content.NewContent(lvl, err, l.appendTime, l.timeFormat, format, args...)
+		f := l.f
+		l.optMu.RUnlock()
+		data, _ := f.Serialize(c)
 		l.Log(string(data))
 	}
 }
@@ -72,7 +78,9 @@ func (l *baseLogger) init(w Writer, lvl level.Level, appendTime bool) {
 
 func (l *baseLogger) setFormatter(f formatter.Formatter) {
 	if f != nil {
+		l.optMu.Lock()
 		l.f = f
+		l.optMu.Unlock()
 	}
 }
 
@@ -80,7 +88,9 @@ func (l *baseLogger) setTimeFormat(f string) {
 	if len(f) == 0 {
 		f = content.DefaultLogTimeFormat()
 	}
+	l.optMu.Lock()
 	l.timeFormat = f
+	l.optMu.Unlock()
 }
 
 func checkLogLevel(lvl level.Level, currentLevel level.Level) bool {

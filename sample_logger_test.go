@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/no-src/log/content"
 	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/level"
 )
@@ -31,6 +32,7 @@ func TestSampleLogger(t *testing.T) {
 }
 
 func testSampleLogs() {
+	DefaultSampleLogger().WithFormatter(formatter.Default()).WithTimeFormat(content.DefaultLogTimeFormat())
 	DebugSample("[sample] %s %s, test debug log", "hello", "world")
 	InfoSample("[sample] %s %s, test info log", "hello", "world")
 	WarnSample("[sample] %s %s, test warn log", "hello", "world")

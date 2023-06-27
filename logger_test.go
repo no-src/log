@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/no-src/log/content"
 	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/internal/sync"
 	"github.com/no-src/log/level"
@@ -17,6 +18,7 @@ var (
 )
 
 func testLogs(t *testing.T) {
+	DefaultLogger().WithFormatter(formatter.Default()).WithTimeFormat(content.DefaultLogTimeFormat())
 	Debug("%s %s, test debug log", "hello", "world")
 	Info("%s %s, test info log", "hello", "world")
 	Warn("%s %s, test warn log", "hello", "world")

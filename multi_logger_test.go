@@ -10,17 +10,30 @@ import (
 
 func TestMultiLogger(t *testing.T) {
 	testCases := []struct {
-		name      string
-		formatter string
+		name        string
+		formatter   string
+		concurrency bool
+		timeFormat  string
 	}{
-		{"TextFormatter", formatter.TextFormatter},
-		{"JsonFormatter", formatter.JsonFormatter},
+		{"TextFormatter", formatter.TextFormatter, false, testTimeFormat},
+		{"JsonFormatter", formatter.JsonFormatter, false, testTimeFormat},
+		{"TextFormatter Concurrency", formatter.TextFormatter, true, ""},
+		{"JsonFormatter Concurrency", formatter.JsonFormatter, true, ""},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel).WithFormatter(formatter.New(tc.formatter))))
+			fLogger, err := NewFileLogger(level.DebugLevel, "./multi_logs", "ns"+tc.formatter)
+			if err != nil {
+				t.Fatal(err)
+			}
+			InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel), fLogger).WithFormatter(formatter.New(tc.formatter)).WithTimeFormat(tc.timeFormat))
 			defer Close()
-			testLogs(t)
+
+			if tc.concurrency {
+				testLogsConcurrency(t, "TestMultiLogger")
+			} else {
+				testLogs(t)
+			}
 		})
 	}
 }
