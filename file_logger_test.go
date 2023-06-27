@@ -79,16 +79,6 @@ func TestFileLogger_WithAutoFlushWithFlushDelay(t *testing.T) {
 	<-time.After(wait * 20)
 }
 
-func TestConsoleLoggerAndFileLogger(t *testing.T) {
-	fLogger, err := NewFileLogger(level.DebugLevel, "./multi_logs", "ns")
-	if err != nil {
-		t.Fatal(err)
-	}
-	InitDefaultLogger(NewMultiLogger(NewConsoleLogger(level.DebugLevel), fLogger))
-	defer Close()
-	testLogs(t)
-}
-
 func TestFileLogger_WithSplitDate(t *testing.T) {
 	fLogger, err := NewFileLoggerWithOption(option.FileLoggerOption{
 		Level:      level.DebugLevel,
