@@ -1,6 +1,7 @@
 package content
 
 import (
+	"sync"
 	"testing"
 	"time"
 )
@@ -34,5 +35,22 @@ func TestTime_MarshalText(t *testing.T) {
 			t.Errorf("test Time.MarshalText failed, expect to get %s, but actual get %s", expect, actual)
 		}
 	}
+}
 
+func TestInitDefaultLogTimeFormat_Concurrency(t *testing.T) {
+	c := 10
+	wg := sync.WaitGroup{}
+	wg.Add(c * 2)
+	for i := 0; i < c; i++ {
+		go func() {
+			InitDefaultLogTimeFormat(time.RFC3339)
+			wg.Done()
+		}()
+
+		go func() {
+			NewTime(time.Now())
+			wg.Done()
+		}()
+	}
+	wg.Wait()
 }

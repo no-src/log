@@ -1,9 +1,13 @@
 package content
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 var (
 	defaultLogTimeFormat = "2006-01-02 15:04:05"
+	mu                   sync.RWMutex
 )
 
 // Time the custom Time for log
@@ -15,12 +19,16 @@ type Time struct {
 // InitDefaultLogTimeFormat init the global default log time format
 func InitDefaultLogTimeFormat(f string) {
 	if len(f) > 0 {
+		mu.Lock()
 		defaultLogTimeFormat = f
+		mu.Unlock()
 	}
 }
 
 // DefaultLogTimeFormat return the default log time format
 func DefaultLogTimeFormat() string {
+	mu.RLock()
+	defer mu.RUnlock()
 	return defaultLogTimeFormat
 }
 
