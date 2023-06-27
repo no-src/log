@@ -2,6 +2,7 @@ package formatter
 
 import (
 	"strings"
+	"sync"
 
 	"github.com/no-src/log/content"
 )
@@ -16,10 +17,13 @@ var (
 	formatters           = make(map[string]Formatter)
 	defaultFormatterType = TextFormatter
 	defaultTerminator    = "\n"
+	mu                   sync.RWMutex
 )
 
 // Default return the global default Formatter
 func Default() Formatter {
+	mu.RLock()
+	defer mu.RUnlock()
 	return New(defaultFormatterType)
 }
 
@@ -37,7 +41,9 @@ func NewTextFormatter() Formatter {
 func InitDefaultFormatter(t string) {
 	_, ok := formatters[t]
 	if ok {
+		mu.Lock()
 		defaultFormatterType = t
+		mu.Unlock()
 	}
 }
 
