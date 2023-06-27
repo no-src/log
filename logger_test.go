@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/no-src/log/content"
 	"github.com/no-src/log/formatter"
 	"github.com/no-src/log/internal/sync"
 	"github.com/no-src/log/level"
@@ -14,7 +13,7 @@ import (
 var (
 	concurrencyCount   = 3
 	concurrencyTimeout = time.Second * 5
-	testTimeFormat     = content.DefaultLogTimeFormat
+	testTimeFormat     = time.RFC3339
 )
 
 func testLogs(t *testing.T) {

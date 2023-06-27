@@ -18,8 +18,8 @@ func TestFileLogger(t *testing.T) {
 		timeFormat  string
 	}{
 		{"TextFormatter", formatter.TextFormatter, false, testTimeFormat},
-		{"JsonFormatter", formatter.JsonFormatter, false, ""},
-		{"TextFormatter Concurrency", formatter.TextFormatter, true, testTimeFormat},
+		{"JsonFormatter", formatter.JsonFormatter, false, testTimeFormat},
+		{"TextFormatter Concurrency", formatter.TextFormatter, true, ""},
 		{"JsonFormatter Concurrency", formatter.JsonFormatter, true, ""},
 	}
 	for _, tc := range testCases {

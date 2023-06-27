@@ -10,7 +10,7 @@ import (
 )
 
 func TestTextFormatter_Serialize(t *testing.T) {
-	logTime, _ := time.ParseInLocation(content.DefaultLogTimeFormat, "2022-06-25 23:59:59", time.UTC)
+	logTime, _ := time.ParseInLocation("2006-01-02 15:04:05", "2022-06-25 23:59:59", time.UTC)
 	logTimeP := content.NewTime(logTime)
 
 	testCases := []struct {
