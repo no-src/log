@@ -13,23 +13,23 @@ func NewEmptyLogger() Logger {
 	return logger
 }
 
-func (l *emptyLogger) Debug(format string, args ...interface{}) {
+func (l *emptyLogger) Debug(format string, args ...any) {
 
 }
 
-func (l *emptyLogger) Info(format string, args ...interface{}) {
+func (l *emptyLogger) Info(format string, args ...any) {
 
 }
 
-func (l *emptyLogger) Warn(format string, args ...interface{}) {
+func (l *emptyLogger) Warn(format string, args ...any) {
 
 }
 
-func (l *emptyLogger) Error(err error, format string, args ...interface{}) {
+func (l *emptyLogger) Error(err error, format string, args ...any) {
 
 }
 
-func (l *emptyLogger) Log(format string, args ...interface{}) {
+func (l *emptyLogger) Log(format string, args ...any) {
 
 }
 

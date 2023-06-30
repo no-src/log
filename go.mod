@@ -1,3 +1,3 @@
 module github.com/no-src/log
 
-go 1.17
+go 1.18

@@ -26,31 +26,31 @@ func NewSampleLogger(logger Logger, sampleFunc sample.SampleFunc, sampleRate flo
 	return l
 }
 
-func (l *sampleLogger) Debug(format string, args ...interface{}) {
+func (l *sampleLogger) Debug(format string, args ...any) {
 	if l.sample() {
 		l.logger.Debug(format, args...)
 	}
 }
 
-func (l *sampleLogger) Info(format string, args ...interface{}) {
+func (l *sampleLogger) Info(format string, args ...any) {
 	if l.sample() {
 		l.logger.Info(format, args...)
 	}
 }
 
-func (l *sampleLogger) Warn(format string, args ...interface{}) {
+func (l *sampleLogger) Warn(format string, args ...any) {
 	if l.sample() {
 		l.logger.Warn(format, args...)
 	}
 }
 
-func (l *sampleLogger) Error(err error, format string, args ...interface{}) {
+func (l *sampleLogger) Error(err error, format string, args ...any) {
 	if l.sample() {
 		l.logger.Error(err, format, args...)
 	}
 }
 
-func (l *sampleLogger) Log(format string, args ...interface{}) {
+func (l *sampleLogger) Log(format string, args ...any) {
 	l.logger.Log(format, args...)
 }
 

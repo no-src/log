@@ -33,27 +33,27 @@ func InitDefaultLoggerWithSample(logger Logger, sampleRate float64) {
 }
 
 // Debug write the debug log
-func Debug(format string, args ...interface{}) {
+func Debug(format string, args ...any) {
 	DefaultLogger().Debug(format, args...)
 }
 
 // Info write the info log
-func Info(format string, args ...interface{}) {
+func Info(format string, args ...any) {
 	DefaultLogger().Info(format, args...)
 }
 
 // Warn write the warn log
-func Warn(format string, args ...interface{}) {
+func Warn(format string, args ...any) {
 	DefaultLogger().Warn(format, args...)
 }
 
 // Error write the error log
-func Error(err error, format string, args ...interface{}) {
+func Error(err error, format string, args ...any) {
 	DefaultLogger().Error(err, format, args...)
 }
 
 // ErrorIf write the error log if err is not nil
-func ErrorIf(err error, format string, args ...interface{}) error {
+func ErrorIf(err error, format string, args ...any) error {
 	if err != nil {
 		Error(err, format, args...)
 	}
@@ -61,27 +61,27 @@ func ErrorIf(err error, format string, args ...interface{}) error {
 }
 
 // DebugSample write the debug log by random sampling
-func DebugSample(format string, args ...interface{}) {
+func DebugSample(format string, args ...any) {
 	DefaultSampleLogger().Debug(format, args...)
 }
 
 // InfoSample write the info log by random sampling
-func InfoSample(format string, args ...interface{}) {
+func InfoSample(format string, args ...any) {
 	DefaultSampleLogger().Info(format, args...)
 }
 
 // WarnSample write the warn log by random sampling
-func WarnSample(format string, args ...interface{}) {
+func WarnSample(format string, args ...any) {
 	DefaultSampleLogger().Warn(format, args...)
 }
 
 // ErrorSample write the error log by random sampling
-func ErrorSample(err error, format string, args ...interface{}) {
+func ErrorSample(err error, format string, args ...any) {
 	DefaultSampleLogger().Error(err, format, args...)
 }
 
 // ErrorIfSample write the error log by random sampling if err is not nil
-func ErrorIfSample(err error, format string, args ...interface{}) error {
+func ErrorIfSample(err error, format string, args ...any) error {
 	if err != nil {
 		ErrorSample(err, format, args...)
 	}
@@ -89,7 +89,7 @@ func ErrorIfSample(err error, format string, args ...interface{}) error {
 }
 
 // Log write the log without level
-func Log(format string, args ...interface{}) {
+func Log(format string, args ...any) {
 	DefaultLogger().Log(format, args...)
 }
 

@@ -8,16 +8,16 @@ import (
 
 // Content the log content info
 type Content struct {
-	Level      level.Level   `json:"level"`
-	Time       *Time         `json:"time,omitempty"`
-	Log        string        `json:"log"`
-	Error      error         `json:"-"`
-	AppendTime bool          `json:"-"`
-	Args       []interface{} `json:"-"`
+	Level      level.Level `json:"level"`
+	Time       *Time       `json:"time,omitempty"`
+	Log        string      `json:"log"`
+	Error      error       `json:"-"`
+	AppendTime bool        `json:"-"`
+	Args       []any       `json:"-"`
 }
 
 // NewContent return an instance of Content
-func NewContent(lvl level.Level, err error, appendTime bool, timeFormat string, log string, args ...interface{}) Content {
+func NewContent(lvl level.Level, err error, appendTime bool, timeFormat string, log string, args ...any) Content {
 	var t *Time
 	if appendTime {
 		t = NewTimeWithFormat(time.Now(), timeFormat)
@@ -26,7 +26,7 @@ func NewContent(lvl level.Level, err error, appendTime bool, timeFormat string, 
 }
 
 // NewContentWithTime return an instance of Content with specified time
-func NewContentWithTime(lvl level.Level, err error, t *Time, log string, args ...interface{}) Content {
+func NewContentWithTime(lvl level.Level, err error, t *Time, log string, args ...any) Content {
 	c := Content{
 		Level:      lvl,
 		Log:        log,

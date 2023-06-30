@@ -13,10 +13,10 @@ type Logger interface {
 	Writer
 	Option
 
-	Debug(format string, args ...interface{})
-	Info(format string, args ...interface{})
-	Warn(format string, args ...interface{})
-	Error(err error, format string, args ...interface{})
+	Debug(format string, args ...any)
+	Info(format string, args ...any)
+	Warn(format string, args ...any)
+	Error(err error, format string, args ...any)
 }
 
 // Writer implement write to log
@@ -24,7 +24,7 @@ type Writer interface {
 	io.Writer
 
 	// Log write log to output
-	Log(format string, args ...interface{})
+	Log(format string, args ...any)
 	// Close to close log and release dependencies
 	Close() error
 }

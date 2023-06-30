@@ -20,24 +20,24 @@ type baseLogger struct {
 	optMu      sync.RWMutex // protect Option
 }
 
-func (l *baseLogger) Debug(format string, args ...interface{}) {
+func (l *baseLogger) Debug(format string, args ...any) {
 	l.log(level.DebugLevel, format, args...)
 }
 
-func (l *baseLogger) Info(format string, args ...interface{}) {
+func (l *baseLogger) Info(format string, args ...any) {
 	l.log(level.InfoLevel, format, args...)
 }
 
-func (l *baseLogger) Warn(format string, args ...interface{}) {
+func (l *baseLogger) Warn(format string, args ...any) {
 	l.log(level.WarnLevel, format, args...)
 }
 
-func (l *baseLogger) Error(err error, format string, args ...interface{}) {
+func (l *baseLogger) Error(err error, format string, args ...any) {
 	l.logWithErr(err, level.ErrorLevel, format, args...)
 }
 
 // Log write a format log
-func (l *baseLogger) Log(format string, args ...interface{}) {
+func (l *baseLogger) Log(format string, args ...any) {
 	format = formatter.AppendRowTerminator(format)
 	if len(args) > 0 {
 		format = fmt.Sprintf(format, args...)
@@ -45,11 +45,11 @@ func (l *baseLogger) Log(format string, args ...interface{}) {
 	l.Write([]byte(format))
 }
 
-func (l *baseLogger) log(lvl level.Level, format string, args ...interface{}) {
+func (l *baseLogger) log(lvl level.Level, format string, args ...any) {
 	l.logWithErr(nil, lvl, format, args...)
 }
 
-func (l *baseLogger) logWithErr(err error, lvl level.Level, format string, args ...interface{}) {
+func (l *baseLogger) logWithErr(err error, lvl level.Level, format string, args ...any) {
 	if checkLogLevel(l.lvl, lvl) {
 		l.optMu.RLock()
 		c := content.NewContent(lvl, err, l.appendTime, l.timeFormat, format, args...)

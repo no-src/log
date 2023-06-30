@@ -187,7 +187,7 @@ func (l *fileLogger) write() {
 	}
 }
 
-func (l *fileLogger) innerLog(format string, args ...interface{}) {
+func (l *fileLogger) innerLog(format string, args ...any) {
 	fmt.Printf(format+"\n", args...)
 }
 
