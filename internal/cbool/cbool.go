@@ -1,39 +1,34 @@
 package cbool
 
-import "sync"
+import (
+	"sync/atomic"
+)
 
 // CBool a concurrent safe bool
 type CBool struct {
-	v  bool
-	mu sync.RWMutex
+	v atomic.Bool
 }
 
 // New create an instance of CBool
 func New(v bool) *CBool {
-	return &CBool{
-		v: v,
-	}
+	cb := &CBool{}
+	cb.v.Store(v)
+	return cb
 }
 
 // Get return the bool value
 func (cb *CBool) Get() bool {
-	cb.mu.RLock()
-	defer cb.mu.RUnlock()
-	return cb.v
+	return cb.v.Load()
 }
 
 // Set to set the bool value
 func (cb *CBool) Set(v bool) {
-	cb.mu.Lock()
-	defer cb.mu.Unlock()
-	cb.v = v
+	cb.v.Store(v)
 }
 
 // SetC to set the bool value and return a closed channel
 func (cb *CBool) SetC(v bool) <-chan struct{} {
-	cb.mu.Lock()
-	defer cb.mu.Unlock()
-	cb.v = v
+	cb.Set(v)
 	c := make(chan struct{})
 	close(c)
 	return c
