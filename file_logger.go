@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/no-src/log/formatter"
-	"github.com/no-src/log/internal/cbool"
 	"github.com/no-src/log/level"
 	"github.com/no-src/log/option"
 )
@@ -35,7 +35,7 @@ type fileLogger struct {
 	in          chan logMsg
 	writer      *bufio.Writer
 	initialized bool
-	closed      *cbool.CBool
+	closed      atomic.Bool
 	close       chan struct{} // the log is closed, and wait to write all the logs
 	mu          sync.Mutex    // avoid data race for writer
 	date        time.Time
@@ -61,11 +61,10 @@ func NewFileLoggerWithAutoFlush(lvl level.Level, logDir string, filePrefix strin
 // NewFileLoggerWithOption get a file logger with option
 func NewFileLoggerWithOption(opt option.FileLoggerOption) (Logger, error) {
 	logger := &fileLogger{
-		opt:    opt,
-		in:     make(chan logMsg, 100),
-		close:  make(chan struct{}, 1),
-		mu:     sync.Mutex{},
-		closed: cbool.New(false),
+		opt:   opt,
+		in:    make(chan logMsg, 100),
+		close: make(chan struct{}, 1),
+		mu:    sync.Mutex{},
 	}
 	// init baseLogger
 	logger.baseLogger.init(logger, opt.Level, true)
@@ -76,7 +75,7 @@ func NewFileLoggerWithOption(opt option.FileLoggerOption) (Logger, error) {
 
 func (l *fileLogger) Close() error {
 	// stop a new log to write
-	l.closed.Set(true)
+	l.closed.Store(true)
 	// send a closed message
 	l.in <- closeLogMsg
 	// wait to receive a close finished message
@@ -203,7 +202,7 @@ func (l *fileLogger) startAutoFlush() {
 		delayCheckCount := 10
 		for {
 			<-time.After(wait)
-			if l.closed.Get() {
+			if l.closed.Load() {
 				return
 			}
 			l.mu.Lock()
@@ -233,7 +232,7 @@ func (l *fileLogger) Write(p []byte) (n int, err error) {
 	}
 	cp := make([]byte, pLen)
 	copy(cp, p)
-	if !l.closed.Get() {
+	if !l.closed.Load() {
 		l.in <- logMsg{
 			log:    cp,
 			closed: false,
