@@ -43,6 +43,10 @@ func (l *multiLogger) Error(err error, format string, args ...any) {
 	}
 }
 
+func (l *multiLogger) ErrorIf(err error, format string, args ...any) error {
+	return errorIf(l.Error, err, format, args...)
+}
+
 func (l *multiLogger) Log(format string, args ...any) {
 	for _, logger := range l.loggers {
 		logger.Log(format, args...)

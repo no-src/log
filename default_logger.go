@@ -54,10 +54,7 @@ func Error(err error, format string, args ...any) {
 
 // ErrorIf write the error log if err is not nil
 func ErrorIf(err error, format string, args ...any) error {
-	if err != nil {
-		Error(err, format, args...)
-	}
-	return err
+	return DefaultLogger().ErrorIf(err, format, args...)
 }
 
 // DebugSample write the debug log by random sampling
@@ -82,10 +79,7 @@ func ErrorSample(err error, format string, args ...any) {
 
 // ErrorIfSample write the error log by random sampling if err is not nil
 func ErrorIfSample(err error, format string, args ...any) error {
-	if err != nil {
-		ErrorSample(err, format, args...)
-	}
-	return err
+	return DefaultSampleLogger().ErrorIf(err, format, args...)
 }
 
 // Log write the log without level

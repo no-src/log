@@ -13,10 +13,16 @@ type Logger interface {
 	Writer
 	Option
 
+	// Debug write the debug log
 	Debug(format string, args ...any)
+	// Info write the info log
 	Info(format string, args ...any)
+	// Warn write the warn log
 	Warn(format string, args ...any)
+	// Error write the error log
 	Error(err error, format string, args ...any)
+	// ErrorIf write the error log if err is not nil
+	ErrorIf(err error, format string, args ...any) error
 }
 
 // Writer implement write to log

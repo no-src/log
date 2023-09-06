@@ -29,6 +29,10 @@ func (l *emptyLogger) Error(err error, format string, args ...any) {
 
 }
 
+func (l *emptyLogger) ErrorIf(err error, format string, args ...any) error {
+	return err
+}
+
 func (l *emptyLogger) Log(format string, args ...any) {
 
 }
