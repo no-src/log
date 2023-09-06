@@ -36,6 +36,10 @@ func (l *baseLogger) Error(err error, format string, args ...any) {
 	l.logWithErr(err, level.ErrorLevel, format, args...)
 }
 
+func (l *baseLogger) ErrorIf(err error, format string, args ...any) error {
+	return errorIf(l.Error, err, format, args...)
+}
+
 // Log write a format log
 func (l *baseLogger) Log(format string, args ...any) {
 	format = formatter.AppendRowTerminator(format)
@@ -95,4 +99,11 @@ func (l *baseLogger) setTimeFormat(f string) {
 
 func checkLogLevel(lvl level.Level, currentLevel level.Level) bool {
 	return currentLevel >= lvl
+}
+
+func errorIf(f func(err error, format string, args ...any), err error, format string, args ...any) error {
+	if err != nil {
+		f(err, format, args...)
+	}
+	return err
 }
