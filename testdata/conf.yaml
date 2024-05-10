@@ -1,0 +1,20 @@
+loggers:
+  - name: "console logger"
+    type: "console"
+    level: "debug"
+    format: "text"
+    time-format: "2006-01-02 15:04:05"
+    sample: 1
+  - name: "file logger"
+    type: "file"
+    level: "info"
+    format: "json"
+    time-format: "2006-01-02 15:04:05"
+    log-dir: "./logs"
+    log-file-prefix: "conf_logger_"
+    auto-flush: true
+    auto-flush-interval: 3s
+    split-by-date: true
+    sample: 0.5
+  - name: "empty logger"
+    type: "empty"
